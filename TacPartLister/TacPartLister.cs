@@ -32,6 +32,8 @@ public class TacPartLister : MonoBehaviour
 
     private Texture2D texture;
 
+    private HashSet<Part> selectedParts;
+
     public class PartListerTest : KSP.Testing.UnitTest
     {
         public PartListerTest()
@@ -54,6 +56,8 @@ public class TacPartLister : MonoBehaviour
         iconMouseWasDragged = false;
         windowMouseDown = false;
         windowMouseWasDragged = false;
+
+        selectedParts = new HashSet<Part>();
     }
 
     void Start()
@@ -119,11 +123,22 @@ public class TacPartLister : MonoBehaviour
         foreach (Part part in parts)
         {
             string partName = part.partInfo.title;
-            if (partName.Length > 24)
+            if (partName.Length > 28)
             {
-                partName = partName.Substring(0, 24);
+                partName = partName.Substring(0, 28);
             }
-            GUILayout.Label(partName, labelStyle);
+
+            bool selected = GUILayout.Toggle(selectedParts.Contains(part), partName, buttonStyle);
+            if (selected)
+            {
+                selectedParts.Add(part);
+                part.SetHighlightColor(Color.blue);
+                part.SetHighlight(true);
+            }
+            else if (selectedParts.Remove(part))
+            {
+                part.SetHighlightDefault();
+            }
         }
         GUILayout.EndVertical();
 
@@ -244,6 +259,10 @@ public class TacPartLister : MonoBehaviour
 
             buttonStyle = new GUIStyle(GUI.skin.button);
             buttonStyle.wordWrap = false;
+            buttonStyle.fontStyle = FontStyle.Normal;
+            buttonStyle.normal.textColor = Color.white;
+            buttonStyle.alignment = TextAnchor.MiddleLeft;
+            buttonStyle.padding = new RectOffset(6, 2, 4, 2);
 
             iconStyle = new GUIStyle(GUI.skin.button);
             iconStyle.alignment = TextAnchor.MiddleCenter;
