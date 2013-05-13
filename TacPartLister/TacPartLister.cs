@@ -12,6 +12,7 @@ public class TacPartLister : MonoBehaviour
     private static int windowId = windowTitle.GetHashCode();
     private static int iconId = windowId + 1;
 
+    private string configFilename;
     private Rect iconPos;
     private Rect windowPos;
     private bool showWindow;
@@ -59,15 +60,23 @@ public class TacPartLister : MonoBehaviour
     {
         Debug.Log("TAC Part Lister [" + this.GetInstanceID().ToString("X") + "][" + Time.time + "]: Start");
 
-        string filename = IOUtils.GetFilePathFor(this.GetType(), "resize.png");
-        if (File.Exists<TacPartLister>(filename))
+        configFilename = IOUtils.GetFilePathFor(this.GetType(), "TacPartLister.cfg");
+        Load();
+
+        string imageFilename = IOUtils.GetFilePathFor(this.GetType(), "resize.png");
+        if (File.Exists<TacPartLister>(imageFilename))
         {
             texture = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-            string temp = "file://" + filename.Replace("\\", "/").Replace("/KSP_Data/..", "");
+            string temp = "file://" + imageFilename.Replace("\\", "/").Replace("/KSP_Data/..", "");
 
             var www = new WWW(temp);
             www.LoadImageIntoTexture(texture);
         }
+    }
+
+    void OnDestroy()
+    {
+        Save();
     }
 
     void OnGUI()
@@ -159,6 +168,56 @@ public class TacPartLister : MonoBehaviour
         HandleWindowEvents(resizeRect);
 
         GUI.DragWindow();
+    }
+
+    private void Load()
+    {
+        if (File.Exists<TacPartLister>(configFilename))
+        {
+            ConfigNode config = ConfigNode.Load(configFilename);
+
+            float newFloat;
+            if (config.HasValue("iconPos.x") && float.TryParse(config.GetValue("iconPos.x"), out newFloat))
+            {
+                iconPos.x = newFloat;
+            }
+            if (config.HasValue("iconPos.y") && float.TryParse(config.GetValue("iconPos.y"), out newFloat))
+            {
+                iconPos.y = newFloat;
+            }
+
+            if (config.HasValue("windowPos.x") && float.TryParse(config.GetValue("windowPos.x"), out newFloat))
+            {
+                windowPos.x = newFloat;
+            }
+            if (config.HasValue("windowPos.y") && float.TryParse(config.GetValue("windowPos.y"), out newFloat))
+            {
+                windowPos.y = newFloat;
+            }
+            if (config.HasValue("windowPos.width") && float.TryParse(config.GetValue("windowPos.width"), out newFloat))
+            {
+                windowPos.width = newFloat;
+            }
+            if (config.HasValue("windowPos.height") && float.TryParse(config.GetValue("windowPos.height"), out newFloat))
+            {
+                windowPos.height = newFloat;
+            }
+        }
+    }
+
+    private void Save()
+    {
+        ConfigNode config = new ConfigNode();
+
+        config.AddValue("iconPos.x", iconPos.x);
+        config.AddValue("iconPos.y", iconPos.y);
+
+        config.AddValue("windowPos.x", windowPos.x);
+        config.AddValue("windowPos.y", windowPos.y);
+        config.AddValue("windowPos.width", windowPos.width);
+        config.AddValue("windowPos.height", windowPos.height);
+
+        config.Save(configFilename);
     }
 
     private void ConfigureStyles()
