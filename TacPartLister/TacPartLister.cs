@@ -11,8 +11,8 @@ public class TacPartLister : MonoBehaviour
     private static string windowTitle = "TAC Part Lister";
     private static int windowId = windowTitle.GetHashCode();
     private static int iconId = windowId + 1;
+    private static string configFilename = "TacPartLister.cfg";
 
-    private string configFilename;
     private Rect iconPos;
     private Rect windowPos;
     private bool showWindow;
@@ -64,18 +64,8 @@ public class TacPartLister : MonoBehaviour
     {
         Debug.Log("TAC Part Lister [" + this.GetInstanceID().ToString("X") + "][" + Time.time + "]: Start");
 
-        configFilename = IOUtils.GetFilePathFor(this.GetType(), "TacPartLister.cfg");
         Load();
-
-        string imageFilename = IOUtils.GetFilePathFor(this.GetType(), "resize.png");
-        if (File.Exists<TacPartLister>(imageFilename))
-        {
-            texture = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-            string temp = "file://" + imageFilename.Replace("\\", "/").Replace("/KSP_Data/..", "");
-
-            var www = new WWW(temp);
-            www.LoadImageIntoTexture(texture);
-        }
+        LoadImages();
     }
 
     void OnDestroy()
@@ -233,6 +223,17 @@ public class TacPartLister : MonoBehaviour
         config.AddValue("windowPos.height", windowPos.height);
 
         config.Save(configFilename);
+    }
+
+    private void LoadImages()
+    {
+        string imageFilename = "resize.png";
+        if (File.Exists<TacPartLister>(imageFilename))
+        {
+            var bytes = File.ReadAllBytes<TacPartLister>(imageFilename);
+            texture = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+            texture.LoadImage(bytes);
+        }
     }
 
     private void ConfigureStyles()
