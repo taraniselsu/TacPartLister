@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
+[KSPAddon(KSPAddon.Startup.EditorAny, false)]
 public class TacPartLister : MonoBehaviour
 {
     private static string windowTitle = "TAC Part Lister";
     private static int windowId = windowTitle.GetHashCode();
     private static int iconId = windowId + 1;
-    private static string configFilename = "TacPartLister.cfg";
+    private string configFilename;
 
     private Rect iconPos;
     private Rect windowPos;
@@ -33,19 +34,10 @@ public class TacPartLister : MonoBehaviour
 
     private HashSet<Part> selectedParts;
 
-    public class PartListerTest : KSP.Testing.UnitTest
-    {
-        public PartListerTest()
-        {
-            Debug.Log("TAC Part Lister [][" + Time.time + "]: Test creation");
-            GameObject gameObject = new GameObject("TacPartLister", typeof(TacPartLister));
-            GameObject.DontDestroyOnLoad(gameObject);
-        }
-    }
-
     void Awake()
     {
         Debug.Log("TAC Part Lister [" + this.GetInstanceID().ToString("X") + "][" + Time.time + "]: Awake");
+        configFilename = IOUtils.GetFilePathFor(this.GetType(), "TacPartLister.cfg");
         iconPos = new Rect(Screen.width * 0.8f, Screen.height - 32, 32, 32);
         windowPos = new Rect(Screen.width * 0.7f, 50.0f, Screen.width * 0.2f, Screen.height * 0.6f);
         showWindow = false;
@@ -69,27 +61,25 @@ public class TacPartLister : MonoBehaviour
 
     void OnDestroy()
     {
+        Debug.Log("TAC Part Lister [" + this.GetInstanceID().ToString("X") + "][" + Time.time + "]: OnDestroy");
         Save();
     }
 
     void OnGUI()
     {
-        if (HighLogic.LoadedSceneIsEditor && EditorLogic.fetch != null)
+        GUI.skin = HighLogic.Skin;
+        ConfigureStyles();
+
+        iconPos.y = Screen.height - 32;
+        iconPos = EnsureVisible(iconPos);
+        GUI.Label(iconPos, new GUIContent("PL", "Click to show the Part Lister"), iconStyle);
+
+        HandleIconEvents();
+
+        if (showWindow)
         {
-            GUI.skin = HighLogic.Skin;
-            ConfigureStyles();
-
-            iconPos.y = Screen.height - 32;
-            iconPos = EnsureVisible(iconPos);
-            GUI.Label(iconPos, new GUIContent("PL", "Click to show the Part Lister"), iconStyle);
-
-            HandleIconEvents();
-
-            if (showWindow)
-            {
-                windowPos = EnsureVisible(windowPos);
-                windowPos = GUILayout.Window(windowId, windowPos, DrawWindow, windowTitle, GUILayout.MinWidth(200), GUILayout.MinHeight(150));
-            }
+            windowPos = EnsureVisible(windowPos);
+            windowPos = GUILayout.Window(windowId, windowPos, DrawWindow, windowTitle, GUILayout.MinWidth(64), GUILayout.MinHeight(64));
         }
     }
 
@@ -161,7 +151,7 @@ public class TacPartLister : MonoBehaviour
         GUILayout.EndHorizontal();
         GUILayout.EndScrollView();
 
-        var resizeRect = new Rect(windowPos.width - 32, windowPos.height - 32, 32, 32);
+        var resizeRect = new Rect(windowPos.width - 16, windowPos.height - 16, 16, 16);
         var content = ((texture != null) ? new GUIContent(texture, "Drag to resize the window.") : new GUIContent("Resize", "Drag to resize the window."));
         GUI.Label(resizeRect, content, iconStyle);
 
@@ -230,7 +220,7 @@ public class TacPartLister : MonoBehaviour
         if (File.Exists<TacPartLister>(imageFilename))
         {
             var bytes = File.ReadAllBytes<TacPartLister>(imageFilename);
-            texture = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+            texture = new Texture2D(16, 16, TextureFormat.ARGB32, false);
             texture.LoadImage(bytes);
         }
     }
@@ -266,6 +256,7 @@ public class TacPartLister : MonoBehaviour
 
             iconStyle = new GUIStyle(GUI.skin.button);
             iconStyle.alignment = TextAnchor.MiddleCenter;
+            iconStyle.padding = new RectOffset(0, 0, 0, 0);
         }
     }
 
