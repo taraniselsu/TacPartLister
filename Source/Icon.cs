@@ -41,6 +41,8 @@ namespace Tac
         {
             iconPos.x = Utilities.GetValue(config, "icon.x", iconPos.x);
             iconPos.y = Utilities.GetValue(config, "icon.y", iconPos.y);
+            iconPos = Utilities.EnsureVisible(iconPos, Math.Min(iconPos.width, iconPos.height));
+            iconPos = Utilities.ClampToScreenEdge(iconPos);
         }
 
         public void Save(ConfigNode config)
