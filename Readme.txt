@@ -9,10 +9,11 @@ This mod is made available under the Attribution-NonCommercial-ShareAlike 3.0 (C
 Source code is available from: https://github.com/taraniselsu/TacPartLister
 
 Features
-* 
+* In the editor, it lists all parts in the vessel showing the name, stage number, mass, and cost of each.
+* It also displays the total mass and total cost.
+* The window can be shown or hidden by clicking the icon.
+* The icon, a small clipboard, can be repositioned anywhere around the edges of the screen by dragging it.
+* The window can be resized by dragging the lower right corner.
 
 Installation procedure:
-1) copy everything from the PluginData directory to the Parts directory in the game, creating
-     the directory if needed.
-2) copy everything from the Plugins directory to the Plugins directory in the game, creating
-     the directory if needed.
+1) Unzip to the <KSP_win>/GameData directory.
