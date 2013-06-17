@@ -41,7 +41,7 @@ namespace Tac
 
             selectedParts = new HashSet<Part>();
 
-            texture = Utilities.LoadImage(IOUtils.GetFilePathFor(typeof(TacPartLister), "resize.png"));
+            texture = Utilities.LoadImage<TacPartLister>(IOUtils.GetFilePathFor(typeof(TacPartLister), "resize.png"));
         }
 
         public bool IsVisible()
