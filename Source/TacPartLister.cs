@@ -38,11 +38,6 @@ namespace Tac
             Save();
         }
 
-        void OnGUI()
-        {
-            window.OnGUI();
-        }
-
         private void Load()
         {
             if (File.Exists<TacPartLister>(configFilename))
@@ -64,7 +59,7 @@ namespace Tac
 
         private void OnIconClicked()
         {
-            window.SetVisible(!window.IsVisible());
+            window.ToggleVisible();
         }
     }
 }
