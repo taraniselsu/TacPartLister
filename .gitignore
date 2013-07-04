@@ -1,4 +1,4 @@
-TacPartLister/Plugins/*.dll
+GameData/**/*.dll
 
 
 #################

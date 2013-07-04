@@ -1,1 +1,2 @@
-xcopy /s /f /y TacPartLister %KSP_PLAY%\GameData\TacPartLister\
+xcopy /s /f /y GameData %KSP_PLAY%\GameData\
+pause

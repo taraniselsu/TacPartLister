@@ -1,13 +1,15 @@
 @echo off
 
-set DIR=TacPartLister_v%1
+set MOD_NAME=TacPartLister
+
+set DIR=%MOD_NAME%_%1
 
 mkdir Release\%DIR%
 
-xcopy /s /f /y TacPartLister Release\%DIR%\
-copy /y LICENSE.txt Release\%DIR%\
-copy /y Readme.txt Release\%DIR%\
+xcopy /s /f /y GameData Release\%DIR%\GameData\
+copy /y LICENSE.txt Release\%DIR%\GameData\%MOD_NAME%\
+copy /y Readme.txt Release\%DIR%\GameData\%MOD_NAME%\
 
-cd Release
-7z a -tzip %DIR%.zip %DIR%
+cd Release\%DIR%
+7z a -tzip %DIR%.zip GameData
 cd ..

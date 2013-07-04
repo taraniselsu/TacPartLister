@@ -7,7 +7,7 @@
     <ProjectGuid>{64AEC1D0-6F23-4FF3-A059-B6B5B92F422D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TacPartLister</RootNamespace>
+    <RootNamespace>Tac</RootNamespace>
     <AssemblyName>TacPartLister</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

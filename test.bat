@@ -1,1 +1,3 @@
-xcopy /s /f /y TacPartLister %KSP_TEST%\GameData\TacPartLister\
+set KSP_TEST=K:\Games\KSP_win-0.20.2-modtester
+xcopy /s /f /y GameData %KSP_TEST%\GameData\
+pause

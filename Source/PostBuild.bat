@@ -1,4 +1,4 @@
-set DIR=%1..\TacPartLister\Plugins\
+set DIR=%1..\GameData\TacPartLister\
 if not exist %DIR% mkdir %DIR%
 copy Tac*.dll %DIR%
 
