@@ -46,7 +46,7 @@ namespace Tac
         private HashSet<Part> selectedParts;
 
         public MainWindow()
-            : base("TAC Part Lister")
+            : base("TAC Part Lister", 360, Screen.height * 0.6f)
         {
             Debug.Log("TAC Part Lister/MainWindow [" + this.GetHashCode().ToString("X") + "][" + Time.time + "]: Constructor");
             scrollPosition = Vector2.zero;

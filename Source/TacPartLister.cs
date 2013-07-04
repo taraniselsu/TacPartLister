@@ -46,7 +46,7 @@ namespace Tac
             Debug.Log("TAC Part Lister [" + this.GetInstanceID().ToString("X") + "][" + Time.time + "]: Awake");
             configFilename = IOUtils.GetFilePathFor(this.GetType(), "TacPartLister.cfg");
             window = new MainWindow();
-            icon = new Icon<TacPartLister>(new Rect(Screen.width * 0.8f, Screen.height - 32, 32, 32), "icon.png", "PL",
+            icon = new Icon<TacPartLister>(new Rect(Screen.width * 0.25f, 0, 32, 32), "icon.png", "PL",
                 "Click to show the Part Lister", OnIconClicked);
         }
 
