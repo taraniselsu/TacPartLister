@@ -43,16 +43,16 @@ namespace Tac
 
         void Awake()
         {
-            Debug.Log("TAC Part Lister [" + this.GetInstanceID().ToString("X") + "][" + Time.time + "]: Awake");
+            this.Log("Awake");
             configFilename = IOUtils.GetFilePathFor(this.GetType(), "TacPartLister.cfg");
             window = new MainWindow();
-            icon = new Icon<TacPartLister>(new Rect(Screen.width * 0.25f, 0, 32, 32), "icon.png", "PL",
+            icon = new Icon<TacPartLister>(new Rect(Screen.width * 0.225f, 0, 32, 32), "icon.png", "PL",
                 "Click to show the Part Lister", OnIconClicked);
         }
 
         void Start()
         {
-            Debug.Log("TAC Part Lister [" + this.GetInstanceID().ToString("X") + "][" + Time.time + "]: Start");
+            this.Log("Start");
             Load();
 
             icon.SetVisible(true);
@@ -60,7 +60,7 @@ namespace Tac
 
         void OnDestroy()
         {
-            Debug.Log("TAC Part Lister [" + this.GetInstanceID().ToString("X") + "][" + Time.time + "]: OnDestroy");
+            this.Log("OnDestroy");
             icon.SetVisible(false);
             Save();
         }

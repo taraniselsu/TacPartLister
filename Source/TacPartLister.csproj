@@ -33,11 +33,11 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Games\KSP_win\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(KSP)\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Games\KSP_win\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>$(KSP)\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -47,17 +47,20 @@
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Games\KSP_win\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>$(KSP)\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\TacLib\Source\Icon.cs">
+    <Compile Include="..\TacLib\Source\Icon.cs">
       <Link>Icon.cs</Link>
     </Compile>
-    <Compile Include="..\..\TacLib\Source\Utilities.cs">
+    <Compile Include="..\TacLib\Source\Logging.cs">
+      <Link>Logging.cs</Link>
+    </Compile>
+    <Compile Include="..\TacLib\Source\Utilities.cs">
       <Link>Utilities.cs</Link>
     </Compile>
-    <Compile Include="..\..\TacLib\Source\Window.cs">
+    <Compile Include="..\TacLib\Source\Window.cs">
       <Link>Window.cs</Link>
     </Compile>
     <Compile Include="MainWindow.cs" />
@@ -65,14 +68,22 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\TacLib\Source\CommonProperties.proj" />
   <PropertyGroup>
-    <PostBuildEvent>call $(ProjectDir)PostBuild.bat $(ProjectDir)</PostBuildEvent>
+    <AssemblyMajorVersion>1</AssemblyMajorVersion>
+    <AssemblyMinorVersion>0</AssemblyMinorVersion>
+    <AssemblyFileBuildNumber>1</AssemblyFileBuildNumber>
+    <AssemblyFileMajorVersion>$(AssemblyMajorVersion)</AssemblyFileMajorVersion>
+    <AssemblyFileMinorVersion>$(AssemblyMinorVersion)</AssemblyFileMinorVersion>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <Target Name="BeforeBuild">
+    <CallTarget Targets="GitInfo" />
   </Target>
   <Target Name="AfterBuild">
+    <CallTarget Targets="TacPostBuild" />
   </Target>
-  -->
 </Project>
