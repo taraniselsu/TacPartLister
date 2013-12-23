@@ -39,15 +39,16 @@ namespace Tac
     {
         private string configFilename;
         private MainWindow window;
-        private Icon<TacPartLister> icon;
+        private ButtonWrapper button;
 
         void Awake()
         {
             this.Log("Awake");
             configFilename = IOUtils.GetFilePathFor(this.GetType(), "TacPartLister.cfg");
             window = new MainWindow();
-            icon = new Icon<TacPartLister>(new Rect(Screen.width * 0.225f, 0, 32, 32), "icon.png", "PL",
-                "Click to show the Part Lister", OnIconClicked);
+            button = new ButtonWrapper(new Rect(Screen.width * 0.225f, 0, 32, 32),
+                "ThunderAerospace/TacPartLister/Textures/button", "PL",
+                "TAC Part Lister", OnIconClicked);
         }
 
         void Start()
@@ -55,14 +56,14 @@ namespace Tac
             this.Log("Start");
             Load();
 
-            icon.SetVisible(true);
+            button.Visible = true;
         }
 
         void OnDestroy()
         {
             this.Log("OnDestroy");
-            icon.SetVisible(false);
             Save();
+            button.Destroy();
         }
 
         private void Load()
@@ -70,7 +71,7 @@ namespace Tac
             if (File.Exists<TacPartLister>(configFilename))
             {
                 ConfigNode config = ConfigNode.Load(configFilename);
-                icon.Load(config);
+                button.Load(config);
                 window.Load(config);
             }
         }
@@ -78,7 +79,7 @@ namespace Tac
         private void Save()
         {
             ConfigNode config = new ConfigNode();
-            icon.Save(config);
+            button.Save(config);
             window.Save(config);
 
             config.Save(configFilename);

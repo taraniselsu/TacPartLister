@@ -9,7 +9,7 @@ This mod is made available under the Attribution-NonCommercial-ShareAlike 3.0 (C
 
 Source code is available from: https://github.com/taraniselsu/TacPartLister
 
-## Features
+### Features
 
 * In the editor, it lists all parts in the vessel showing the name, stage number, mass, and cost of each.
 * It also displays the total mass and total cost.
@@ -17,6 +17,6 @@ Source code is available from: https://github.com/taraniselsu/TacPartLister
 * The icon, a small clipboard, can be repositioned anywhere around the edges of the screen by dragging it.
 * The window can be resized by dragging the lower right corner.
 
-## Installation procedure
+### Installation procedure
 
 1) Copy everything in the GameData directory to the {KSP}/GameData directory.
