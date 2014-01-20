@@ -36,22 +36,21 @@ namespace Tac
 {
     class MainWindow : Window<TacPartLister>
     {
+        private readonly string version;
+        private readonly HashSet<Part> selectedParts = new HashSet<Part>();
+        private Vector2 scrollPosition = Vector2.zero;
+
         private GUIStyle labelStyle;
         private GUIStyle labelStyle2;
         private GUIStyle headerStyle;
         private GUIStyle buttonStyle;
-
-        private Vector2 scrollPosition;
-
-        private HashSet<Part> selectedParts;
+        private GUIStyle versionStyle;
 
         public MainWindow()
             : base("TAC Part Lister", 360, Screen.height * 0.6f)
         {
             this.Log("Constructor");
-            scrollPosition = Vector2.zero;
-
-            selectedParts = new HashSet<Part>();
+            version = Utilities.GetDllVersion(this);
         }
 
         protected override void DrawWindowContents(int windowId)
@@ -125,6 +124,8 @@ namespace Tac
             GUILayout.Label("Parts: " + parts.Count.ToString() + ", Mass: " + totalMass.ToString("#,##0.###") + ", Cost: " + totalCost.ToString("#,##0.#"), labelStyle);
 
             GUILayout.EndVertical();
+
+            GUI.Label(new Rect(4, windowPos.height - 13, windowPos.width - 20, 12), "TAC Part Lister v" + version, versionStyle);
         }
 
         protected override void ConfigureStyles()
@@ -157,6 +158,8 @@ namespace Tac
                 buttonStyle.normal.textColor = Color.white;
                 buttonStyle.alignment = TextAnchor.MiddleLeft;
                 buttonStyle.padding = new RectOffset(6, 2, 4, 2);
+
+                versionStyle = Utilities.GetVersionStyle();
             }
         }
 
