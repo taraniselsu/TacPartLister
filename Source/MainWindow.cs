@@ -57,6 +57,7 @@ namespace Tac
         {
             double totalMass = 0.0;
             double totalCost = 0.0;
+            double totalResCost = 0.0;
 
             var parts = new List<Part>(EditorLogic.fetch.ship.parts);
             parts.ForEach(part => part.UpdateOrgPosAndRot(part.localRoot));
@@ -118,10 +119,30 @@ namespace Tac
             }
             GUILayout.EndVertical();
 
+            GUILayout.BeginVertical();
+            GUILayout.Label("Res.Cost", headerStyle);
+            foreach (Part part in parts)
+            {
+                double partResCost = 0.0;
+                
+                foreach (PartResource Resource in part.Resources)
+                {
+                    partResCost += Resource.amount * Resource.info.unitCost;
+                }
+                GUILayout.Label(partResCost.ToString("#,##0.#"), labelStyle2);
+                totalResCost += partResCost;
+            }
+            GUILayout.EndVertical();
+
             GUILayout.EndHorizontal();
             GUILayout.EndScrollView();
 
-            GUILayout.Label("Parts: " + parts.Count.ToString() + ", Mass: " + totalMass.ToString("#,##0.###") + ", Cost: " + totalCost.ToString("#,##0.#"), labelStyle);
+            GUILayout.Label("Parts: " + parts.Count.ToString() + ", Mass: " + totalMass.ToString("#,##0.###"), labelStyle);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Cost:", headerStyle);
+            GUILayout.Label(" Parts: " + totalCost.ToString("#,##0.#") + ", Resources: " + totalResCost.ToString("#,##0.#") + ", Total: " + (totalCost + totalResCost).ToString("#,##0.#"), labelStyle);
+            GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
 
