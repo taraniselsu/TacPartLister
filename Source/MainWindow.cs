@@ -119,9 +119,17 @@ namespace Tac
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
+
+            GUILayout.Space(5);
+            GUILayout.Label("Resources: ", headerStyle);
+            foreach (KeyValuePair<string, ResourceInfo> entry in GetResources(parts))
+            {
+                GUILayout.Label("  " + entry.Key + " \t" + Utilities.FormatValue(entry.Value.amount) + "U \t" + Utilities.FormatValue(entry.Value.cost) + "K", labelStyle);
+            }
+
             GUILayout.EndScrollView();
 
-            GUILayout.Label("Parts: " + parts.Count.ToString() + ", Mass: " + totalMass.ToString("#,##0.###") + ", Cost: " + totalCost.ToString("#,##0.#"), labelStyle);
+            GUILayout.Label("Parts: " + parts.Count.ToString() + ", Mass: " + totalMass.ToString("#,##0.######") + ", Cost: " + totalCost.ToString("#,##0.##"), labelStyle);
 
             GUILayout.EndVertical();
 
@@ -166,6 +174,36 @@ namespace Tac
         private static int SortParts(Part p1, Part p2)
         {
             return -p1.orgPos.y.CompareTo(p2.orgPos.y);
+        }
+
+        internal struct ResourceInfo
+        {
+            internal double amount;
+            internal double cost;
+        }
+
+        private Dictionary<string, ResourceInfo> GetResources(List<Part> parts)
+        {
+            Dictionary<string, ResourceInfo> resourceInfos = new Dictionary<string, ResourceInfo>();
+
+            foreach (Part p in parts)
+            {
+                foreach (PartResource r in p.Resources)
+                {
+                    ResourceInfo resourceInfo;
+                    if (!resourceInfos.TryGetValue(r.resourceName, out resourceInfo))
+                    {
+                        resourceInfo = new ResourceInfo();
+                    }
+
+                    resourceInfo.amount += r.amount;
+                    resourceInfo.cost += r.amount * r.info.unitCost;
+
+                    resourceInfos[r.resourceName] = resourceInfo;
+                }
+            }
+
+            return resourceInfos;
         }
     }
 }
