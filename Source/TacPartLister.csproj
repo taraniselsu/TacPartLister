@@ -77,13 +77,19 @@
   <PropertyGroup>
     <AssemblyMajorVersion>1</AssemblyMajorVersion>
     <AssemblyMinorVersion>2</AssemblyMinorVersion>
-    <AssemblyFileBuildNumber>0</AssemblyFileBuildNumber>
+    <AssemblyBuildNumber>0</AssemblyBuildNumber>
     <AssemblyFileMajorVersion>$(AssemblyMajorVersion)</AssemblyFileMajorVersion>
     <AssemblyFileMinorVersion>$(AssemblyMinorVersion)</AssemblyFileMinorVersion>
+    <AssemblyFileBuildNumber>$(AssemblyBuildNumber)</AssemblyFileBuildNumber>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <!-- Needed for the WriteAvcVersion build target -->
+    <ModName>TAC Part Lister</ModName>
+    <ModUrl>http://ksp-avc.cybutek.net/version.php?id=71</ModUrl>
+    <DownloadUrl></DownloadUrl>
+    <KspVersionMajor>0</KspVersionMajor>
+    <KspVersionMinor>25</KspVersionMinor>
+    <KspVersionPatch>0</KspVersionPatch>
   </PropertyGroup>
   <Target Name="BeforeBuild">
     <CallTarget Targets="GitInfo" />
