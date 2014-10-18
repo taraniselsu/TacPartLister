@@ -40,6 +40,8 @@ namespace Tac
         private string configFilename;
         private MainWindow window;
         private ButtonWrapper button;
+        private const string lockName = "TACPL_EditorLock";
+        private const ControlTypes desiredLock = ControlTypes.EDITOR_SOFT_LOCK | ControlTypes.EDITOR_UI | ControlTypes.EDITOR_LAUNCH;
 
         void Awake()
         {
@@ -47,7 +49,7 @@ namespace Tac
             configFilename = IOUtils.GetFilePathFor(this.GetType(), "TacPartLister.cfg");
             window = new MainWindow();
             button = new ButtonWrapper(new Rect(Screen.width * 0.225f, 0, 32, 32),
-                "ThunderAerospace/TacPartLister/Textures/button", "PL",
+                "TacPartLister/Textures/button", "PL",
                 "TAC Part Lister", OnIconClicked);
         }
 
@@ -59,11 +61,35 @@ namespace Tac
             button.Visible = true;
         }
 
+        void Update()
+        {
+            if (window.IsVisible() && window.Contains(Event.current.mousePosition))
+            {
+                if (InputLockManager.GetControlLock(lockName) != desiredLock)
+                {
+                    InputLockManager.SetControlLock(desiredLock, lockName);
+                }
+            }
+            else
+            {
+                if (InputLockManager.GetControlLock(lockName) == desiredLock)
+                {
+                    InputLockManager.RemoveControlLock(lockName);
+                }
+            }
+        }
+
         void OnDestroy()
         {
             this.Log("OnDestroy");
             Save();
             button.Destroy();
+
+            // Make sure we remove our locks
+            if (InputLockManager.GetControlLock(lockName) == desiredLock)
+            {
+                InputLockManager.RemoveControlLock(lockName);
+            }
         }
 
         private void Load()
