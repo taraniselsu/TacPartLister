@@ -109,9 +109,17 @@ namespace Tac
             GUILayout.Label("Mass", headerStyle, GUILayout.ExpandWidth(true));
             foreach (Part part in parts)
             {
-                var mass = part.mass + part.GetResourceMass();
-                GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
-                totalFullMass += mass;
+                if (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp"))
+                {
+                    var mass = part.mass + part.GetResourceMass();
+                    GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
+                    totalFullMass += mass;
+                }
+                else
+                {
+                    // the part is "physics-less" in-game, so ignore the mass
+                    GUILayout.Label("-", labelStyle2, GUILayout.ExpandWidth(true));
+                }
             }
             GUILayout.EndVertical();
 
@@ -129,9 +137,17 @@ namespace Tac
             GUILayout.Label("Empty Mass", headerStyle, GUILayout.ExpandWidth(true));
             foreach (Part part in parts)
             {
-                var mass = part.mass;
-                GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
-                totalEmptyMass += mass;
+                if (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp"))
+                {
+                    var mass = part.mass;
+                    GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
+                    totalEmptyMass += mass;
+                }
+                else
+                {
+                    // the part is "physics-less" in-game, so ignore the mass
+                    GUILayout.Label("-", labelStyle2, GUILayout.ExpandWidth(true));
+                }
             }
             GUILayout.EndVertical();
 
