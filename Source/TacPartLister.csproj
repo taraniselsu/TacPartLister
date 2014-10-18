@@ -69,6 +69,8 @@
       <Link>Window.cs</Link>
     </Compile>
     <Compile Include="MainWindow.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="SettingsWindow.cs" />
     <Compile Include="TacPartLister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -86,7 +88,8 @@
     <!-- Needed for the WriteAvcVersion build target -->
     <ModName>TAC Part Lister</ModName>
     <ModUrl>http://ksp-avc.cybutek.net/version.php?id=71</ModUrl>
-    <DownloadUrl></DownloadUrl>
+    <DownloadUrl>
+    </DownloadUrl>
     <KspVersionMajor>0</KspVersionMajor>
     <KspVersionMinor>25</KspVersionMinor>
     <KspVersionPatch>0</KspVersionPatch>

@@ -38,6 +38,8 @@ namespace Tac
     public class TacPartLister : MonoBehaviour
     {
         private string configFilename;
+        private Settings settings;
+        private SettingsWindow settingsWindow;
         private MainWindow window;
         private ButtonWrapper button;
         private const string lockName = "TACPL_EditorLock";
@@ -47,7 +49,9 @@ namespace Tac
         {
             this.Log("Awake");
             configFilename = IOUtils.GetFilePathFor(this.GetType(), "TacPartLister.cfg");
-            window = new MainWindow();
+            settings = new Settings();
+            settingsWindow = new SettingsWindow(settings);
+            window = new MainWindow(settings, settingsWindow);
             button = new ButtonWrapper(new Rect(Screen.width * 0.225f, 0, 32, 32),
                 "TacPartLister/Textures/button", "PL",
                 "TAC Part Lister", OnIconClicked);
@@ -63,7 +67,8 @@ namespace Tac
 
         void Update()
         {
-            if (window.IsVisible() && window.Contains(Event.current.mousePosition))
+            if ((window.IsVisible() && window.Contains(Event.current.mousePosition))
+                || (settingsWindow.IsVisible() && settingsWindow.Contains(Event.current.mousePosition)))
             {
                 if (InputLockManager.GetControlLock(lockName) != desiredLock)
                 {
@@ -97,16 +102,20 @@ namespace Tac
             if (File.Exists<TacPartLister>(configFilename))
             {
                 ConfigNode config = ConfigNode.Load(configFilename);
+                settings.Load(config);
                 button.Load(config);
                 window.Load(config);
+                settingsWindow.Load(config);
             }
         }
 
         private void Save()
         {
             ConfigNode config = new ConfigNode();
+            settings.Save(config);
             button.Save(config);
             window.Save(config);
+            settingsWindow.Save(config);
 
             config.Save(configFilename);
         }
