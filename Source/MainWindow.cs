@@ -39,11 +39,13 @@ namespace Tac
         private readonly string version;
         private readonly HashSet<Part> selectedParts = new HashSet<Part>();
         private Vector2 scrollPosition = Vector2.zero;
+        private bool showResources = false;
 
         private GUIStyle labelStyle;
         private GUIStyle labelStyle2;
         private GUIStyle headerStyle;
         private GUIStyle buttonStyle;
+        private GUIStyle toggleButtonStyle;
         private GUIStyle versionStyle;
 
         public MainWindow()
@@ -55,8 +57,12 @@ namespace Tac
 
         protected override void DrawWindowContents(int windowId)
         {
-            double totalMass = 0.0;
-            double totalCost = 0.0;
+            double totalFullMass = 0.0;
+            double totalResourceMass = 0.0;
+            double totalEmptyMass = 0.0;
+            double totalFullCost = 0.0;
+            double totalResourceCost = 0.0;
+            double totalEmptyCost = 0.0;
 
             var parts = new List<Part>(EditorLogic.fetch.ship.parts);
             parts.ForEach(part => part.UpdateOrgPosAndRot(part.localRoot));
@@ -92,44 +98,93 @@ namespace Tac
             GUILayout.EndVertical();
 
             GUILayout.BeginVertical();
-            GUILayout.Label("Stage", headerStyle);
+            GUILayout.Label("Stage", headerStyle, GUILayout.ExpandWidth(true));
             foreach (Part part in parts)
             {
-                GUILayout.Label(part.inverseStage.ToString(), labelStyle2);
+                GUILayout.Label(part.inverseStage.ToString(), labelStyle2, GUILayout.ExpandWidth(true));
             }
             GUILayout.EndVertical();
 
             GUILayout.BeginVertical();
-            GUILayout.Label("Mass", headerStyle);
+            GUILayout.Label("Mass", headerStyle, GUILayout.ExpandWidth(true));
             foreach (Part part in parts)
             {
                 var mass = part.mass + part.GetResourceMass();
-                GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2);
-                totalMass += mass;
+                GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
+                totalFullMass += mass;
             }
             GUILayout.EndVertical();
 
             GUILayout.BeginVertical();
-            GUILayout.Label("Cost", headerStyle);
+            GUILayout.Label("Resource Mass", headerStyle, GUILayout.ExpandWidth(true));
             foreach (Part part in parts)
             {
-                GUILayout.Label(part.partInfo.cost.ToString("#,##0.#"), labelStyle2);
-                totalCost += part.partInfo.cost;
+                var mass = part.GetResourceMass();
+                GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
+                totalResourceMass += mass;
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical();
+            GUILayout.Label("Empty Mass", headerStyle, GUILayout.ExpandWidth(true));
+            foreach (Part part in parts)
+            {
+                var mass = part.mass;
+                GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
+                totalEmptyMass += mass;
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical();
+            GUILayout.Label("Cost", headerStyle, GUILayout.ExpandWidth(true));
+            foreach (Part part in parts)
+            {
+                double missingResourcesCost = part.Resources.list.Sum(r => (r.maxAmount - r.amount) * r.info.unitCost);
+                double partCost = part.partInfo.cost + part.GetModuleCosts() - missingResourcesCost;
+                GUILayout.Label(partCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
+                totalFullCost += partCost;
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical();
+            GUILayout.Label("Resource Cost", headerStyle, GUILayout.ExpandWidth(true));
+            foreach (Part part in parts)
+            {
+                double resourceCost = part.Resources.list.Sum(r => r.amount * r.info.unitCost);
+                GUILayout.Label(resourceCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
+                totalResourceCost += resourceCost;
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical();
+            GUILayout.Label("Empty Cost", headerStyle, GUILayout.ExpandWidth(true));
+            foreach (Part part in parts)
+            {
+                double maxResourceCost = part.Resources.list.Sum(r => r.maxAmount * r.info.unitCost);
+                double emptyPartCost = part.partInfo.cost + part.GetModuleCosts() - maxResourceCost;
+                GUILayout.Label(emptyPartCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
+                totalEmptyCost += emptyPartCost;
             }
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(5);
-            GUILayout.Label("Resources: ", headerStyle);
-            foreach (KeyValuePair<string, ResourceInfo> entry in GetResources(parts))
-            {
-                GUILayout.Label("  " + entry.Key + " \t" + Utilities.FormatValue(entry.Value.amount) + "U \t" + Utilities.FormatValue(entry.Value.cost) + "K", labelStyle);
-            }
-
             GUILayout.EndScrollView();
 
-            GUILayout.Label("Parts: " + parts.Count.ToString() + ", Mass: " + totalMass.ToString("#,##0.######") + ", Cost: " + totalCost.ToString("#,##0.##"), labelStyle);
+            GUILayout.Space(2);
+            GUILayout.Label("Parts: " + parts.Count.ToString(), labelStyle);
+            GUILayout.Label("Mass: total: " + totalFullMass.ToString("#,##0.###") + ", resources: " + totalResourceMass.ToString("#,##0.###") + ", empty: " + totalEmptyMass.ToString("#,##0.###"), labelStyle);
+            GUILayout.Label("Cost: total: " + totalFullCost.ToString("#,##0.##") + ", resources: " + totalResourceCost.ToString("#,##0.##") + ", empty: " + totalEmptyCost.ToString("#,##0.##"), labelStyle);
+
+            showResources = GUILayout.Toggle(showResources, "Show resources", toggleButtonStyle, GUILayout.ExpandWidth(false));
+            if (showResources)
+            {
+                foreach (KeyValuePair<string, ResourceInfo> entry in GetResources(parts))
+                {
+                    GUILayout.Label("  " + entry.Key + "  " + Utilities.FormatValue(entry.Value.amount, 3) + "U  " + Utilities.FormatValue(entry.Value.mass, 3) + "g  " + Utilities.FormatValue(entry.Value.cost, 2) + "K", labelStyle);
+                }
+            }
+            GUILayout.Space(6);
 
             GUILayout.EndVertical();
 
@@ -147,12 +202,16 @@ namespace Tac
                 labelStyle.fontStyle = FontStyle.Normal;
                 labelStyle.normal.textColor = Color.white;
                 labelStyle.alignment = TextAnchor.MiddleLeft;
+                labelStyle.margin.top = 0;
+                labelStyle.margin.bottom = 0;
+                labelStyle.padding.top = 0;
+                labelStyle.padding.bottom = 1;
 
                 labelStyle2 = new GUIStyle(GUI.skin.label);
                 labelStyle2.wordWrap = false;
                 labelStyle2.fontStyle = FontStyle.Normal;
                 labelStyle2.normal.textColor = Color.white;
-                labelStyle2.alignment = TextAnchor.MiddleCenter;
+                labelStyle2.alignment = TextAnchor.MiddleRight;
 
                 headerStyle = new GUIStyle(GUI.skin.label);
                 headerStyle.wordWrap = false;
@@ -167,6 +226,16 @@ namespace Tac
                 buttonStyle.alignment = TextAnchor.MiddleLeft;
                 buttonStyle.padding = new RectOffset(6, 2, 4, 2);
 
+                toggleButtonStyle = new GUIStyle(GUI.skin.button);
+                toggleButtonStyle.wordWrap = false;
+                toggleButtonStyle.fontStyle = FontStyle.Normal;
+                toggleButtonStyle.normal.textColor = Color.white;
+                toggleButtonStyle.alignment = TextAnchor.MiddleCenter;
+                toggleButtonStyle.margin.top = 1;
+                toggleButtonStyle.margin.bottom = 1;
+                toggleButtonStyle.padding.top = 3;
+                toggleButtonStyle.padding.bottom = 1;
+
                 versionStyle = Utilities.GetVersionStyle();
             }
         }
@@ -179,6 +248,7 @@ namespace Tac
         internal struct ResourceInfo
         {
             internal double amount;
+            internal double mass;
             internal double cost;
         }
 
@@ -197,6 +267,7 @@ namespace Tac
                     }
 
                     resourceInfo.amount += r.amount;
+                    resourceInfo.mass += r.amount * r.info.density * 1000000.0; // mass in grams (g)
                     resourceInfo.cost += r.amount * r.info.unitCost;
 
                     resourceInfos[r.resourceName] = resourceInfo;
