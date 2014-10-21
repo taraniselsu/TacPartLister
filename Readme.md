@@ -7,6 +7,9 @@ For use with the Kerbal Space Program, http://kerbalspaceprogram.com/
 
 This mod is made available under the Attribution-NonCommercial-ShareAlike 3.0 (CC BY-NC-SA 3.0) creative commons license. See the LICENSE.txt file.
 
+Includes contributions by:
+	girka2k
+
 Source code is available from: https://github.com/taraniselsu/TacPartLister
 
 ### Features
