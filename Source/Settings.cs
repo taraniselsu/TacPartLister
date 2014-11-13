@@ -42,6 +42,7 @@ namespace Tac
         internal bool showResourceCost { get; set; }
         internal bool showEmptyCost { get; set; }
         internal bool highlightGridAreas { get; set; }
+        internal bool showColoredNumbers { get; set; }
 
         internal Settings()
         {
@@ -53,6 +54,7 @@ namespace Tac
             showResourceCost = true;
             showEmptyCost = true;
             highlightGridAreas = true;
+            showColoredNumbers = true;
         }
 
         internal void Load(ConfigNode config)
@@ -65,6 +67,7 @@ namespace Tac
             showResourceCost = Utilities.GetValue(config, "showResourceCost", showResourceCost);
             showEmptyCost = Utilities.GetValue(config, "showEmptyCost", showEmptyCost);
             highlightGridAreas = Utilities.GetValue(config, "highlightGridAreas", highlightGridAreas);
+            showColoredNumbers = Utilities.GetValue(config, "showColoredNumbers", showColoredNumbers);
         }
 
         internal void Save(ConfigNode config)
@@ -77,6 +80,7 @@ namespace Tac
             config.AddValue("showResourceCost", showResourceCost);
             config.AddValue("showEmptyCost", showEmptyCost);
             config.AddValue("highlightGridAreas", highlightGridAreas);
+            config.AddValue("showColoredNumbers", showColoredNumbers);
         }
     }
 }

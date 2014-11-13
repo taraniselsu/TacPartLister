@@ -45,6 +45,8 @@ namespace Tac
 
         private GUIStyle labelStyle;
         private GUIStyle labelStyle2;
+        private GUIStyle labelStyleRes;
+        private GUIStyle labelStyleEmpty;
         private GUIStyle headerStyleTop;
         private GUIStyle headerStyle;
         private GUIStyle buttonStyle;
@@ -79,6 +81,8 @@ namespace Tac
             double totalFullCost = 0.0;
             double totalResourceCost = 0.0;
             double totalEmptyCost = 0.0;
+
+            SetColoredNumbers(settings.showColoredNumbers);
 
             var parts = new List<Part>(EditorLogic.fetch.ship.parts);
             parts.ForEach(part => part.UpdateOrgPosAndRot(part.localRoot));
@@ -171,7 +175,7 @@ namespace Tac
             {
                 var mass = part.GetResourceMass();
                 if (settings.showResourceMass)
-                    GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
+                    GUILayout.Label(mass.ToString("#,##0.###"), labelStyleRes, GUILayout.ExpandWidth(true));
                 totalResourceMass += mass;
             }
             if (settings.showResourceMass)
@@ -188,7 +192,7 @@ namespace Tac
                 {
                     var mass = part.mass;
                     if (settings.showEmptyMass)
-                        GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
+                        GUILayout.Label(mass.ToString("#,##0.###"), labelStyleEmpty, GUILayout.ExpandWidth(true));
                     totalEmptyMass += mass;
                 }
                 else
@@ -244,7 +248,7 @@ namespace Tac
             {
                 double resourceCost = part.Resources.list.Sum(r => r.amount * r.info.unitCost);
                 if (settings.showResourceCost)
-                    GUILayout.Label(resourceCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
+                    GUILayout.Label(resourceCost.ToString("#,##0.##"), labelStyleRes, GUILayout.ExpandWidth(true));
                 totalResourceCost += resourceCost;
             }
             if (settings.showResourceCost)
@@ -260,7 +264,7 @@ namespace Tac
                 double maxResourceCost = part.Resources.list.Sum(r => r.maxAmount * r.info.unitCost);
                 double emptyPartCost = part.partInfo.cost + part.GetModuleCosts() - maxResourceCost;
                 if (settings.showEmptyCost)
-                    GUILayout.Label(emptyPartCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
+                    GUILayout.Label(emptyPartCost.ToString("#,##0.##"), labelStyleEmpty, GUILayout.ExpandWidth(true));
                 totalEmptyCost += emptyPartCost;
             }
             if (settings.showEmptyCost)
@@ -320,6 +324,9 @@ namespace Tac
                 labelStyle2.normal.textColor = Color.white;
                 labelStyle2.alignment = TextAnchor.MiddleRight;
 
+                labelStyleRes = new GUIStyle(labelStyle2);
+                labelStyleEmpty = new GUIStyle(labelStyle2);
+
                 headerStyle = new GUIStyle(GUI.skin.label);
                 headerStyle.wordWrap = false;
                 headerStyle.fontStyle = FontStyle.Bold;
@@ -329,6 +336,7 @@ namespace Tac
 
                 headerStyleTop = new GUIStyle(headerStyle);
                 headerStyleTop.padding.bottom = 0;
+//                headerStyleTop.margin.bottom = 0;
 
                 buttonStyle = new GUIStyle(GUI.skin.button);
                 buttonStyle.wordWrap = false;
@@ -350,6 +358,20 @@ namespace Tac
                 versionStyle = Utilities.GetVersionStyle();
 
                 gridAreaStyle = new GUIStyle(GUI.skin.scrollView);
+            }
+        }
+
+        private void SetColoredNumbers(bool ColoredNumbers)
+        {
+            if (ColoredNumbers)
+            {
+                labelStyleRes.normal.textColor = Color.yellow + Color.gray * 1.5f;
+                labelStyleEmpty.normal.textColor = Color.cyan      + Color.gray * 1.5f;
+            }
+            else
+            {
+                labelStyleRes.normal.textColor = Color.white;
+                labelStyleEmpty.normal.textColor = Color.white;
             }
         }
 

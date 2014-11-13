@@ -67,6 +67,7 @@ namespace Tac
             settings.showResourceCost = GUILayout.Toggle(settings.showResourceCost, "Show Resource Cost");
             settings.showEmptyCost = GUILayout.Toggle(settings.showEmptyCost, "Show Empty Cost");
             settings.highlightGridAreas = GUILayout.Toggle(settings.highlightGridAreas, "Highlight Mass & Cost areas");
+            settings.showColoredNumbers = GUILayout.Toggle(settings.showColoredNumbers, "Show Colored Numbers");
 
             GUILayout.EndVertical();
 
