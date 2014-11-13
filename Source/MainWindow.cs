@@ -126,97 +126,111 @@ namespace Tac
             {
                 GUILayout.BeginVertical();
                 GUILayout.Label("Mass", headerStyle, GUILayout.ExpandWidth(true));
-                foreach (Part part in parts)
-                {
-                    if (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp"))
-                    {
-                        var mass = part.mass + part.GetResourceMass();
-                        GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
-                        totalFullMass += mass;
-                    }
-                    else
-                    {
-                        // the part is "physics-less" in-game, so ignore the mass
-                        GUILayout.Label("-", labelStyle2, GUILayout.ExpandWidth(true));
-                    }
-                }
-                GUILayout.EndVertical();
             }
+            foreach (Part part in parts)
+            {
+                if (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp"))
+                {
+                    var mass = part.mass + part.GetResourceMass();
+                    if (settings.showFullMass)
+                        GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
+                    totalFullMass += mass;
+                }
+                else
+                {
+                    // the part is "physics-less" in-game, so ignore the mass
+                    if (settings.showFullMass)
+                        GUILayout.Label("-", labelStyle2, GUILayout.ExpandWidth(true));
+                }
+            }
+            if (settings.showFullMass)
+                GUILayout.EndVertical();
 
             if (settings.showResourceMass)
             {
                 GUILayout.BeginVertical();
                 GUILayout.Label("Resource Mass", headerStyle, GUILayout.ExpandWidth(true));
-                foreach (Part part in parts)
-                {
-                    var mass = part.GetResourceMass();
-                    GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
-                    totalResourceMass += mass;
-                }
-                GUILayout.EndVertical();
             }
+            foreach (Part part in parts)
+            {
+                var mass = part.GetResourceMass();
+                if (settings.showResourceMass)
+                    GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
+                totalResourceMass += mass;
+            }
+            if (settings.showResourceMass)
+                GUILayout.EndVertical();
 
             if (settings.showEmptyMass)
             {
                 GUILayout.BeginVertical();
                 GUILayout.Label("Empty Mass", headerStyle, GUILayout.ExpandWidth(true));
-                foreach (Part part in parts)
-                {
-                    if (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp"))
-                    {
-                        var mass = part.mass;
-                        GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
-                        totalEmptyMass += mass;
-                    }
-                    else
-                    {
-                        // the part is "physics-less" in-game, so ignore the mass
-                        GUILayout.Label("-", labelStyle2, GUILayout.ExpandWidth(true));
-                    }
-                }
-                GUILayout.EndVertical();
             }
+            foreach (Part part in parts)
+            {
+                if (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp"))
+                {
+                    var mass = part.mass;
+                    if (settings.showEmptyMass)
+                        GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
+                    totalEmptyMass += mass;
+                }
+                else
+                {
+                    // the part is "physics-less" in-game, so ignore the mass
+                    if (settings.showEmptyMass)
+                        GUILayout.Label("-", labelStyle2, GUILayout.ExpandWidth(true));
+                }
+            }
+            if (settings.showEmptyMass)
+                GUILayout.EndVertical();
 
             if (settings.showFullCost)
             {
                 GUILayout.BeginVertical();
                 GUILayout.Label("Cost", headerStyle, GUILayout.ExpandWidth(true));
-                foreach (Part part in parts)
-                {
-                    double missingResourcesCost = part.Resources.list.Sum(r => (r.maxAmount - r.amount) * r.info.unitCost);
-                    double partCost = part.partInfo.cost + part.GetModuleCosts() - missingResourcesCost;
-                    GUILayout.Label(partCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
-                    totalFullCost += partCost;
-                }
-                GUILayout.EndVertical();
             }
+            foreach (Part part in parts)
+            {
+                double missingResourcesCost = part.Resources.list.Sum(r => (r.maxAmount - r.amount) * r.info.unitCost);
+                double partCost = part.partInfo.cost + part.GetModuleCosts() - missingResourcesCost;
+                if (settings.showFullCost)
+                    GUILayout.Label(partCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
+                totalFullCost += partCost;
+            }
+            if (settings.showFullCost)
+                GUILayout.EndVertical();
 
             if (settings.showResourceCost)
             {
                 GUILayout.BeginVertical();
                 GUILayout.Label("Resource Cost", headerStyle, GUILayout.ExpandWidth(true));
-                foreach (Part part in parts)
-                {
-                    double resourceCost = part.Resources.list.Sum(r => r.amount * r.info.unitCost);
-                    GUILayout.Label(resourceCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
-                    totalResourceCost += resourceCost;
-                }
-                GUILayout.EndVertical();
             }
+            foreach (Part part in parts)
+            {
+                double resourceCost = part.Resources.list.Sum(r => r.amount * r.info.unitCost);
+                if (settings.showResourceCost)
+                    GUILayout.Label(resourceCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
+                totalResourceCost += resourceCost;
+            }
+            if (settings.showResourceCost)
+                GUILayout.EndVertical();
 
             if (settings.showEmptyCost)
             {
                 GUILayout.BeginVertical();
                 GUILayout.Label("Empty Cost", headerStyle, GUILayout.ExpandWidth(true));
-                foreach (Part part in parts)
-                {
-                    double maxResourceCost = part.Resources.list.Sum(r => r.maxAmount * r.info.unitCost);
-                    double emptyPartCost = part.partInfo.cost + part.GetModuleCosts() - maxResourceCost;
-                    GUILayout.Label(emptyPartCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
-                    totalEmptyCost += emptyPartCost;
-                }
-                GUILayout.EndVertical();
             }
+            foreach (Part part in parts)
+            {
+                double maxResourceCost = part.Resources.list.Sum(r => r.maxAmount * r.info.unitCost);
+                double emptyPartCost = part.partInfo.cost + part.GetModuleCosts() - maxResourceCost;
+                if (settings.showEmptyCost)
+                    GUILayout.Label(emptyPartCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
+                totalEmptyCost += emptyPartCost;
+            }
+            if (settings.showEmptyCost)
+                GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
             GUILayout.EndScrollView();
