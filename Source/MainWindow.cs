@@ -45,10 +45,12 @@ namespace Tac
 
         private GUIStyle labelStyle;
         private GUIStyle labelStyle2;
+        private GUIStyle headerStyleTop;
         private GUIStyle headerStyle;
         private GUIStyle buttonStyle;
         private GUIStyle toggleButtonStyle;
         private GUIStyle versionStyle;
+        private GUIStyle gridAreaStyle;
 
         public MainWindow(Settings settings, SettingsWindow settingsWindow)
             : base("TAC Part Lister", 360, Screen.height * 0.6f)
@@ -88,6 +90,7 @@ namespace Tac
             GUILayout.BeginHorizontal();
 
             GUILayout.BeginVertical();
+            GUILayout.Label("", headerStyleTop);
             GUILayout.Label("Part Name", headerStyle);
             foreach (Part part in parts)
             {
@@ -114,6 +117,7 @@ namespace Tac
             if (settings.showStage)
             {
                 GUILayout.BeginVertical();
+                GUILayout.Label("", headerStyleTop);
                 GUILayout.Label("Stage", headerStyle, GUILayout.ExpandWidth(true));
                 foreach (Part part in parts)
                 {
@@ -122,10 +126,22 @@ namespace Tac
                 GUILayout.EndVertical();
             }
 
+            bool showMassArea = settings.showFullMass || settings.showResourceMass || settings.showEmptyMass;
+            if (showMassArea)
+            {
+                //Mass grid area
+                if (settings.highlightGridAreas)
+                    GUILayout.BeginVertical(gridAreaStyle, GUILayout.ExpandHeight(true));
+                else
+                    GUILayout.BeginVertical();
+                GUILayout.Label("Mass", headerStyleTop, GUILayout.ExpandWidth(true));
+                GUILayout.BeginHorizontal();
+            }
+
             if (settings.showFullMass)
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label("Mass", headerStyle, GUILayout.ExpandWidth(true));
+                GUILayout.Label("Wet", headerStyle, GUILayout.ExpandWidth(true));
             }
             foreach (Part part in parts)
             {
@@ -149,7 +165,7 @@ namespace Tac
             if (settings.showResourceMass)
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label("Resource Mass", headerStyle, GUILayout.ExpandWidth(true));
+                GUILayout.Label("Res.", headerStyle, GUILayout.ExpandWidth(true));
             }
             foreach (Part part in parts)
             {
@@ -164,7 +180,7 @@ namespace Tac
             if (settings.showEmptyMass)
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label("Empty Mass", headerStyle, GUILayout.ExpandWidth(true));
+                GUILayout.Label("Dry", headerStyle, GUILayout.ExpandWidth(true));
             }
             foreach (Part part in parts)
             {
@@ -185,10 +201,28 @@ namespace Tac
             if (settings.showEmptyMass)
                 GUILayout.EndVertical();
 
+            if (showMassArea)
+            {
+                GUILayout.EndHorizontal();
+                GUILayout.EndVertical(); //Mass grid area
+            }
+
+            bool showCostArea = settings.showFullCost || settings.showResourceCost || settings.showEmptyCost;
+            if (showCostArea)
+            {
+                //Cost grid area
+                if (settings.highlightGridAreas)
+                    GUILayout.BeginVertical(gridAreaStyle, GUILayout.ExpandHeight(true));
+                else
+                    GUILayout.BeginVertical();
+                GUILayout.Label("Cost", headerStyleTop, GUILayout.ExpandWidth(true));
+                GUILayout.BeginHorizontal();
+            }
+
             if (settings.showFullCost)
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label("Cost", headerStyle, GUILayout.ExpandWidth(true));
+                GUILayout.Label("Total", headerStyle, GUILayout.ExpandWidth(true));
             }
             foreach (Part part in parts)
             {
@@ -204,7 +238,7 @@ namespace Tac
             if (settings.showResourceCost)
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label("Resource Cost", headerStyle, GUILayout.ExpandWidth(true));
+                GUILayout.Label("Res.", headerStyle, GUILayout.ExpandWidth(true));
             }
             foreach (Part part in parts)
             {
@@ -219,7 +253,7 @@ namespace Tac
             if (settings.showEmptyCost)
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label("Empty Cost", headerStyle, GUILayout.ExpandWidth(true));
+                GUILayout.Label("Part", headerStyle, GUILayout.ExpandWidth(true));
             }
             foreach (Part part in parts)
             {
@@ -232,12 +266,18 @@ namespace Tac
             if (settings.showEmptyCost)
                 GUILayout.EndVertical();
 
+            if (showCostArea)
+            {
+                GUILayout.EndHorizontal();
+                GUILayout.EndVertical(); //Cost grid area
+            }
+
             GUILayout.EndHorizontal();
             GUILayout.EndScrollView();
 
             GUILayout.Space(2);
             GUILayout.Label("Parts: " + parts.Count.ToString(), labelStyle);
-            GUILayout.Label("Mass: total: " + totalFullMass.ToString("#,##0.###") + ", resources: " + totalResourceMass.ToString("#,##0.###") + ", empty: " + totalEmptyMass.ToString("#,##0.###"), labelStyle);
+            GUILayout.Label("Mass: wet: " + totalFullMass.ToString("#,##0.###") + ", resources: " + totalResourceMass.ToString("#,##0.###") + ",   dry: " + totalEmptyMass.ToString("#,##0.###"), labelStyle);
             GUILayout.Label("Cost: total: " + totalFullCost.ToString("#,##0.##") + ", resources: " + totalResourceCost.ToString("#,##0.##") + ", empty: " + totalEmptyCost.ToString("#,##0.##"), labelStyle);
 
             showResources = GUILayout.Toggle(showResources, "Show resources", toggleButtonStyle, GUILayout.ExpandWidth(false));
@@ -285,6 +325,10 @@ namespace Tac
                 headerStyle.fontStyle = FontStyle.Bold;
                 headerStyle.normal.textColor = Color.white;
                 headerStyle.alignment = TextAnchor.MiddleCenter;
+                headerStyle.padding.top = 0;
+
+                headerStyleTop = new GUIStyle(headerStyle);
+                headerStyleTop.padding.bottom = 0;
 
                 buttonStyle = new GUIStyle(GUI.skin.button);
                 buttonStyle.wordWrap = false;
@@ -304,6 +348,8 @@ namespace Tac
                 toggleButtonStyle.padding.bottom = 1;
 
                 versionStyle = Utilities.GetVersionStyle();
+
+                gridAreaStyle = new GUIStyle(GUI.skin.scrollView);
             }
         }
 
