@@ -397,6 +397,11 @@ namespace Tac
                 float mass;
                 double cost;
 
+                //some parts doesn't contain any resource
+                //or has maxAmount of all resources equals to 0 (for example the electricity generators or consumers of fuel, such as engines)
+                bool isResourceContainer = ((part.Resources.Count > 0) &&
+                                            (part.Resources.list.Sum(r => (float)r.maxAmount) > 0.001));
+
                 partInfo.Part = part;
 
                 partInfo.NameLabel = part.partInfo.title;
@@ -420,9 +425,17 @@ namespace Tac
                     partInfo.FullMass = "-";
                 }
 
-                mass = part.GetResourceMass();
-                partInfo.ResourceMass = mass.ToString("#,##0.###");
-                totalResourceMass += mass;
+                if (isResourceContainer)
+                {
+                    mass = part.GetResourceMass();
+                    partInfo.ResourceMass = mass.ToString("#,##0.###");
+                    totalResourceMass += mass;
+                }
+                else
+                {
+                    // the part has no resources
+                    partInfo.ResourceMass = "-";
+                }
 
                 if (!IsPartPhysicsLess(part))
                 {
@@ -442,9 +455,17 @@ namespace Tac
                 partInfo.FullCost = cost.ToString("#,##0.##");
                 totalFullCost += cost;
 
-                cost = part.Resources.list.Sum(r => r.amount * r.info.unitCost);
-                partInfo.ResourceCost = cost.ToString("#,##0.##");
-                totalResourceCost += cost;
+                if (isResourceContainer)
+                {
+                    cost = part.Resources.list.Sum(r => r.amount * r.info.unitCost);
+                    partInfo.ResourceCost = cost.ToString("#,##0.##");
+                    totalResourceCost += cost;
+                }
+                else
+                {
+                    // the part has no resources
+                    partInfo.ResourceCost = "-";
+                }
 
                 double maxResourceCost = part.Resources.list.Sum(r => r.maxAmount * r.info.unitCost);
                 cost = part.partInfo.cost + part.GetModuleCosts() - maxResourceCost;
