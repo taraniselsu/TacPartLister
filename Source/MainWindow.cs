@@ -284,7 +284,7 @@ namespace Tac
 
             if (GUI.Button(new Rect(windowPos.width - 46, 4, 20, 20), "S", closeButtonStyle))
             {
-                settingsWindow.SetVisible(true);
+                settingsWindow.ToggleVisible();
             }
         }
 
