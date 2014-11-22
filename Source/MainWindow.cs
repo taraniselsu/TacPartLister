@@ -50,6 +50,7 @@ namespace Tac
         private GUIStyle headerStyleTop;
         private GUIStyle headerStyle;
         private GUIStyle buttonStyle;
+        private GUIStyle deleteButtonStyle;
         private GUIStyle toggleButtonStyle;
         private GUIStyle versionStyle;
         private GUIStyle gridAreaStyle;
@@ -106,6 +107,34 @@ namespace Tac
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
             GUILayout.BeginHorizontal();
 
+            if (settings.showDeleteButtons)
+            {
+                GUILayout.BeginVertical();
+                GUILayout.Label("", headerStyleTop);
+                GUILayout.Label("", headerStyle);
+                foreach (PartStringInfo partInfo in PartInfos)
+                {
+                    if (partInfo.Part != EditorLogic.startPod)
+                    {
+                        bool toDelete = GUILayout.Button("X", deleteButtonStyle);
+                        if (toDelete)
+                        {
+                            partInfo.Part.parent.removeChild(partInfo.Part);
+                            Part CurrentSelectedPart = EditorLogic.fetch.PartSelected;
+                            EditorLogic.fetch.PartSelected = partInfo.Part;
+                            EditorLogic.fetch.DestroySelectedPart();
+                            EditorLogic.fetch.PartSelected = CurrentSelectedPart;
+                        }
+                    }
+                    else
+                    {
+                        //root part of ship
+                        GUILayout.Label("", labelStyle2);
+                    }
+                }
+                GUILayout.EndVertical();
+            }
+
             GUILayout.BeginVertical();
             GUILayout.Label("", headerStyleTop);
             GUILayout.Label("Part Name", headerStyle);
@@ -122,7 +151,6 @@ namespace Tac
                 {
                     partInfo.Part.SetHighlightDefault();
                 }
- 
             }
             GUILayout.EndVertical();
 
@@ -301,6 +329,10 @@ namespace Tac
                 buttonStyle.normal.textColor = Color.white;
                 buttonStyle.alignment = TextAnchor.MiddleLeft;
                 buttonStyle.padding = new RectOffset(6, 2, 4, 2);
+
+                deleteButtonStyle = new GUIStyle(buttonStyle);
+                deleteButtonStyle.normal.textColor = Color.red;
+                deleteButtonStyle.fontStyle = FontStyle.Bold;
 
                 toggleButtonStyle = new GUIStyle(GUI.skin.button);
                 toggleButtonStyle.wordWrap = false;
