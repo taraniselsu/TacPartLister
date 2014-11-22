@@ -129,7 +129,7 @@ namespace Tac
                     else
                     {
                         //root part of ship
-                        GUILayout.Label("", labelStyle2);
+                        GUILayout.Label("", deleteButtonStyle);
                     }
                 }
                 GUILayout.EndVertical();
