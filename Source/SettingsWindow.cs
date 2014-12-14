@@ -69,7 +69,6 @@ namespace Tac
             settings.showEmptyCost = GUILayout.Toggle(settings.showEmptyCost, "Show Empty Cost");
             settings.includePhysicsLessParts = GUILayout.Toggle(settings.includePhysicsLessParts, "Include Physics-less Parts");
             settings.highlightGridAreas = GUILayout.Toggle(settings.highlightGridAreas, "Highlight Mass & Cost areas");
-            settings.showColoredNumbers = GUILayout.Toggle(settings.showColoredNumbers, "Show Colored Numbers");
 
             GUILayout.EndVertical();
 

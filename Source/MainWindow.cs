@@ -63,21 +63,8 @@ namespace Tac
         private double totalResourceCost;
         private double totalEmptyCost;
 
-        internal struct PartStringInfo
-        {
-            internal Part Part;
-            internal string NameLabel;
-            internal string Stage;
-            internal string FullMass;
-            internal string ResourceMass;
-            internal string EmptyMass;
-            internal string FullCost;
-            internal string ResourceCost;
-            internal string EmptyCost;
-        }
-
-        private List<PartStringInfo> PartInfos = new List<PartStringInfo>();
-        private Dictionary<string, ResourceInfo> ResourceInfos = new Dictionary<string, ResourceInfo>();
+        private List<PartStringInfo> partInfos = new List<PartStringInfo>();
+        private Dictionary<string, ResourceInfo> resourceInfos = new Dictionary<string, ResourceInfo>();
 
         public MainWindow(Settings settings, SettingsWindow settingsWindow)
             : base("TAC Part Lister", 360, Screen.height * 0.6f)
@@ -100,11 +87,7 @@ namespace Tac
 
         protected override void DrawWindowContents(int windowId)
         {
-
-            SetColoredNumbers(settings.showColoredNumbers);
-
             GUILayout.BeginVertical();
-
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
             GUILayout.BeginHorizontal();
 
@@ -113,23 +96,18 @@ namespace Tac
                 GUILayout.BeginVertical();
                 GUILayout.Label("", headerStyleTop);
                 GUILayout.Label("", headerStyle);
-                foreach (PartStringInfo partInfo in PartInfos)
+                foreach (PartStringInfo partInfo in partInfos)
                 {
-                    if (partInfo.Part != EditorLogic.startPod)
+                    if (partInfo.part != EditorLogic.RootPart)
                     {
-                        bool toDelete = GUILayout.Button("X", deleteButtonStyle);
-                        if (toDelete)
+                        if (GUILayout.Button("X", deleteButtonStyle))
                         {
-                            partInfo.Part.parent.removeChild(partInfo.Part);
-                            Part CurrentSelectedPart = EditorLogic.fetch.PartSelected;
-                            EditorLogic.fetch.PartSelected = partInfo.Part;
-                            EditorLogic.fetch.DestroySelectedPart();
-                            EditorLogic.fetch.PartSelected = CurrentSelectedPart;
+                            EditorLogic.DeletePart(partInfo.part);
                         }
                     }
                     else
                     {
-                        //root part of ship
+                        // The root part of ship cannot be deleted
                         GUILayout.Label("", deleteButtonStyle);
                     }
                 }
@@ -139,20 +117,20 @@ namespace Tac
             GUILayout.BeginVertical();
             GUILayout.Label("", headerStyleTop);
             GUILayout.Label("Part Name", headerStyle);
-            foreach (PartStringInfo partInfo in PartInfos)
+            foreach (PartStringInfo partInfo in partInfos)
             {
-                bool selected = GUILayout.Toggle(selectedParts.Contains(partInfo.Part), partInfo.NameLabel, buttonStyle);
+                bool selected = GUILayout.Toggle(selectedParts.Contains(partInfo.part), partInfo.nameLabel, buttonStyle);
                 if (selected)
                 {
-                    if (!selectedParts.Contains(partInfo.Part))
+                    if (!selectedParts.Contains(partInfo.part))
                     {
-                        selectedParts.Add(partInfo.Part);
-                        Highlight(partInfo.Part);
+                        selectedParts.Add(partInfo.part);
+                        Highlight(partInfo.part);
                     }
                 }
-                else if (selectedParts.Remove(partInfo.Part))
+                else if (selectedParts.Remove(partInfo.part))
                 {
-                    ClearHighlight(partInfo.Part);
+                    ClearHighlight(partInfo.part);
                 }
             }
             GUILayout.EndVertical();
@@ -162,9 +140,9 @@ namespace Tac
                 GUILayout.BeginVertical();
                 GUILayout.Label("", headerStyleTop);
                 GUILayout.Label("Stage", headerStyle, GUILayout.ExpandWidth(true));
-                foreach (PartStringInfo partInfo in PartInfos)
+                foreach (PartStringInfo partInfo in partInfos)
                 {
-                    GUILayout.Label(partInfo.Stage, labelStyle2, GUILayout.ExpandWidth(true));
+                    GUILayout.Label(partInfo.stage, labelStyle2, GUILayout.ExpandWidth(true));
                 }
                 GUILayout.EndVertical();
             }
@@ -172,11 +150,15 @@ namespace Tac
             bool showMassArea = settings.showFullMass || settings.showResourceMass || settings.showEmptyMass;
             if (showMassArea)
             {
-                //Mass grid area
                 if (settings.highlightGridAreas)
+                {
                     GUILayout.BeginVertical(gridAreaStyle, GUILayout.ExpandHeight(true));
+                }
                 else
+                {
                     GUILayout.BeginVertical();
+                }
+
                 GUILayout.Label("Mass", headerStyleTop, GUILayout.ExpandWidth(true));
                 GUILayout.BeginHorizontal();
 
@@ -184,9 +166,9 @@ namespace Tac
                 {
                     GUILayout.BeginVertical();
                     GUILayout.Label("Wet", headerStyle, GUILayout.ExpandWidth(true));
-                    foreach (PartStringInfo partInfo in PartInfos)
+                    foreach (PartStringInfo partInfo in partInfos)
                     {
-                        GUILayout.Label(partInfo.FullMass, labelStyle2, GUILayout.ExpandWidth(true));
+                        GUILayout.Label(partInfo.fullMass, labelStyle2, GUILayout.ExpandWidth(true));
                     }
                     GUILayout.EndVertical();
                 }
@@ -195,9 +177,9 @@ namespace Tac
                 {
                     GUILayout.BeginVertical();
                     GUILayout.Label("Res.", headerStyle, GUILayout.ExpandWidth(true));
-                    foreach (PartStringInfo partInfo in PartInfos)
+                    foreach (PartStringInfo partInfo in partInfos)
                     {
-                        GUILayout.Label(partInfo.ResourceMass, labelStyleRes, GUILayout.ExpandWidth(true));
+                        GUILayout.Label(partInfo.resourceMass, labelStyleRes, GUILayout.ExpandWidth(true));
                     }
                     GUILayout.EndVertical();
                 }
@@ -206,25 +188,29 @@ namespace Tac
                 {
                     GUILayout.BeginVertical();
                     GUILayout.Label("Dry", headerStyle, GUILayout.ExpandWidth(true));
-                    foreach (PartStringInfo partInfo in PartInfos)
+                    foreach (PartStringInfo partInfo in partInfos)
                     {
-                        GUILayout.Label(partInfo.EmptyMass, labelStyleEmpty, GUILayout.ExpandWidth(true));
+                        GUILayout.Label(partInfo.emptyMass, labelStyleEmpty, GUILayout.ExpandWidth(true));
                     }
                     GUILayout.EndVertical();
                 }
 
                 GUILayout.EndHorizontal();
-                GUILayout.EndVertical(); //End of Mass grid area
+                GUILayout.EndVertical();
             }
 
             bool showCostArea = settings.showFullCost || settings.showResourceCost || settings.showEmptyCost;
             if (showCostArea)
             {
-                //Cost grid area
                 if (settings.highlightGridAreas)
+                {
                     GUILayout.BeginVertical(gridAreaStyle, GUILayout.ExpandHeight(true));
+                }
                 else
+                {
                     GUILayout.BeginVertical();
+                }
+
                 GUILayout.Label("Cost", headerStyleTop, GUILayout.ExpandWidth(true));
                 GUILayout.BeginHorizontal();
 
@@ -232,9 +218,9 @@ namespace Tac
                 {
                     GUILayout.BeginVertical();
                     GUILayout.Label("Total", headerStyle, GUILayout.ExpandWidth(true));
-                    foreach (PartStringInfo partInfo in PartInfos)
+                    foreach (PartStringInfo partInfo in partInfos)
                     {
-                        GUILayout.Label(partInfo.FullCost, labelStyle2, GUILayout.ExpandWidth(true));
+                        GUILayout.Label(partInfo.fullCost, labelStyle2, GUILayout.ExpandWidth(true));
                     }
                     GUILayout.EndVertical();
                 }
@@ -243,9 +229,9 @@ namespace Tac
                 {
                     GUILayout.BeginVertical();
                     GUILayout.Label("Res.", headerStyle, GUILayout.ExpandWidth(true));
-                    foreach (PartStringInfo partInfo in PartInfos)
+                    foreach (PartStringInfo partInfo in partInfos)
                     {
-                        GUILayout.Label(partInfo.ResourceCost, labelStyleRes, GUILayout.ExpandWidth(true));
+                        GUILayout.Label(partInfo.resourceCost, labelStyleRes, GUILayout.ExpandWidth(true));
                     }
                     GUILayout.EndVertical();
                 }
@@ -254,29 +240,29 @@ namespace Tac
                 {
                     GUILayout.BeginVertical();
                     GUILayout.Label("Part", headerStyle, GUILayout.ExpandWidth(true));
-                    foreach (PartStringInfo partInfo in PartInfos)
+                    foreach (PartStringInfo partInfo in partInfos)
                     {
-                        GUILayout.Label(partInfo.EmptyCost, labelStyleEmpty, GUILayout.ExpandWidth(true));
+                        GUILayout.Label(partInfo.emptyCost, labelStyleEmpty, GUILayout.ExpandWidth(true));
                     }
                     GUILayout.EndVertical();
                 }
 
                 GUILayout.EndHorizontal();
-                GUILayout.EndVertical(); //End of Cost grid area
+                GUILayout.EndVertical();
             }
 
             GUILayout.EndHorizontal();
             GUILayout.EndScrollView();
 
             GUILayout.Space(2);
-            GUILayout.Label("Parts: " + PartInfos.Count.ToString(), labelStyle);
+            GUILayout.Label("Parts: " + partInfos.Count.ToString(), labelStyle);
             GUILayout.Label("Mass: wet: " + totalFullMass.ToString("#,##0.###") + ", resources: " + totalResourceMass.ToString("#,##0.###") + ",   dry: " + totalEmptyMass.ToString("#,##0.###"), labelStyle);
             GUILayout.Label("Cost: total: " + totalFullCost.ToString("#,##0.##") + ", resources: " + totalResourceCost.ToString("#,##0.##") + ", empty: " + totalEmptyCost.ToString("#,##0.##"), labelStyle);
 
             showResources = GUILayout.Toggle(showResources, "Show resources", toggleButtonStyle, GUILayout.ExpandWidth(false));
             if (showResources)
             {
-                foreach (KeyValuePair<string, ResourceInfo> entry in ResourceInfos)
+                foreach (KeyValuePair<string, ResourceInfo> entry in resourceInfos)
                 {
                     GUILayout.Label("  " + entry.Key + "  " + Utilities.FormatValue(entry.Value.amount, 3) + "U  " + Utilities.FormatValue(entry.Value.mass, 3) + "g  " + Utilities.FormatValue(entry.Value.cost, 2) + "K", labelStyle);
                 }
@@ -314,7 +300,10 @@ namespace Tac
                 labelStyle2.alignment = TextAnchor.MiddleRight;
 
                 labelStyleRes = new GUIStyle(labelStyle2);
+                labelStyleRes.normal.textColor = Color.yellow + Color.gray * 1.5f;
+
                 labelStyleEmpty = new GUIStyle(labelStyle2);
+                labelStyleEmpty.normal.textColor = Color.cyan + Color.gray * 1.5f;
 
                 headerStyle = new GUIStyle(GUI.skin.label);
                 headerStyle.wordWrap = false;
@@ -353,30 +342,9 @@ namespace Tac
             }
         }
 
-        private void SetColoredNumbers(bool ColoredNumbers)
-        {
-            if (ColoredNumbers)
-            {
-                labelStyleRes.normal.textColor = Color.yellow + Color.gray * 1.5f;
-                labelStyleEmpty.normal.textColor = Color.cyan      + Color.gray * 1.5f;
-            }
-            else
-            {
-                labelStyleRes.normal.textColor = Color.white;
-                labelStyleEmpty.normal.textColor = Color.white;
-            }
-        }
-
         private static int SortParts(Part p1, Part p2)
         {
             return -p1.orgPos.y.CompareTo(p2.orgPos.y);
-        }
-
-        internal struct ResourceInfo
-        {
-            internal double amount;
-            internal double mass;
-            internal double cost;
         }
 
         private Dictionary<string, ResourceInfo> GetResources(List<Part> parts)
@@ -442,7 +410,7 @@ namespace Tac
             }
         }
 
-        private bool IsPartPhysicsLess(Part part)
+        private bool IsPhysicsLess(Part part)
         {
             return part.PhysicsSignificance == 1 || part.name == "strutConnector" || part.name == "fuelLine" || part.Modules.Contains("LaunchClamp");
         }
@@ -450,7 +418,7 @@ namespace Tac
         public void RefreshPartInfos(List<Part> inParts)
         {
             this.Log("RefreshPartInfos - inParts.Count: " + inParts.Count);
-            PartInfos = new List<PartStringInfo>();
+            partInfos = new List<PartStringInfo>();
 
             totalFullMass = 0.0;
             totalResourceMass = 0.0;
@@ -467,88 +435,102 @@ namespace Tac
             foreach (Part part in parts)
             {
                 PartStringInfo partInfo;
-                float mass;
-                double cost;
+                partInfo.part = part;
 
-                //some parts doesn't contain any resource
-                //or has maxAmount of all resources equals to 0 (for example the electricity generators or consumers of fuel, such as engines)
-                bool isResourceContainer = ((part.Resources.Count > 0) &&
-                                            (part.Resources.list.Sum(r => (float)r.maxAmount) > 0.001));
-
-                partInfo.Part = part;
-
-                partInfo.NameLabel = part.partInfo.title;
-                if (partInfo.NameLabel.Length > 28)
+                partInfo.nameLabel = part.partInfo.title;
+                if (partInfo.nameLabel.Length > 28)
                 {
-                    partInfo.NameLabel = partInfo.NameLabel.Substring(0, 28);
+                    partInfo.nameLabel = partInfo.nameLabel.Substring(0, 28);
                 }
 
-                partInfo.Stage = part.inverseStage.ToString();
+                partInfo.stage = part.inverseStage.ToString();
 
-                //mass
-                if (settings.includePhysicsLessParts || !IsPartPhysicsLess(part))
+                // mass
+                if (settings.includePhysicsLessParts || !IsPhysicsLess(part))
                 {
-                    mass = part.mass + part.GetModuleMass(part.mass) + part.GetResourceMass();
-                    partInfo.FullMass = mass.ToString("#,##0.###");
-                    totalFullMass += mass;
+                    float fullMass = part.mass + part.GetModuleMass(part.mass) + part.GetResourceMass();
+                    partInfo.fullMass = fullMass.ToString("#,##0.###");
+                    totalFullMass += fullMass;
                 }
                 else
                 {
                     // the part is "physics-less" in-game, so ignore the mass
-                    partInfo.FullMass = "-";
+                    partInfo.fullMass = "-";
                 }
 
+                bool isResourceContainer = part.Resources.list.Any(r => r.maxAmount > 0.001);
                 if (isResourceContainer)
                 {
-                    mass = part.GetResourceMass();
-                    partInfo.ResourceMass = mass.ToString("#,##0.###");
-                    totalResourceMass += mass;
+                    float resourceMass = part.GetResourceMass();
+                    partInfo.resourceMass = resourceMass.ToString("#,##0.###");
+                    totalResourceMass += resourceMass;
                 }
                 else
                 {
-                    // the part has no resources
-                    partInfo.ResourceMass = "-";
+                    // the part has no resources, or has maxAmount of all resources set to 0 (for
+                    // example the electricity generators or consumers of fuel, such as engines)
+                    partInfo.resourceMass = "-";
                 }
 
-                if (settings.includePhysicsLessParts || !IsPartPhysicsLess(part))
+                if (settings.includePhysicsLessParts || !IsPhysicsLess(part))
                 {
-                    mass = part.mass + part.GetModuleMass(part.mass);
-                    partInfo.EmptyMass = mass.ToString("#,##0.###");
-                    totalEmptyMass += mass;
+                    float emptyMass = part.mass + part.GetModuleMass(part.mass);
+                    partInfo.emptyMass = emptyMass.ToString("#,##0.###");
+                    totalEmptyMass += emptyMass;
                 }
                 else
                 {
                     // the part is "physics-less" in-game, so ignore the mass
-                    partInfo.EmptyMass = "-";
+                    partInfo.emptyMass = "-";
                 }
 
-                //cost
-                double missingResourcesCost = part.Resources.list.Sum(r => (r.maxAmount - r.amount) * r.info.unitCost);
-                cost = part.partInfo.cost + part.GetModuleCosts(part.partInfo.cost) - missingResourcesCost;
-                partInfo.FullCost = cost.ToString("#,##0.##");
-                totalFullCost += cost;
+                // cost
+                double maxCostOfResources = part.Resources.list.Sum(r => r.maxAmount * r.info.unitCost);
+                double emptyCost = part.partInfo.cost + part.GetModuleCosts(part.partInfo.cost) - maxCostOfResources;
+                partInfo.emptyCost = emptyCost.ToString("#,##0.##");
+                totalEmptyCost += emptyCost;
 
+                double resourceCost = 0.0;
                 if (isResourceContainer)
                 {
-                    cost = part.Resources.list.Sum(r => r.amount * r.info.unitCost);
-                    partInfo.ResourceCost = cost.ToString("#,##0.##");
-                    totalResourceCost += cost;
+                    resourceCost = part.Resources.list.Sum(r => r.amount * r.info.unitCost);
+                    partInfo.resourceCost = resourceCost.ToString("#,##0.##");
+                    totalResourceCost += resourceCost;
                 }
                 else
                 {
                     // the part has no resources
-                    partInfo.ResourceCost = "-";
+                    partInfo.resourceCost = "-";
                 }
 
-                double maxResourceCost = part.Resources.list.Sum(r => r.maxAmount * r.info.unitCost);
-                cost = part.partInfo.cost + part.GetModuleCosts(part.partInfo.cost) - maxResourceCost;
-                partInfo.EmptyCost = cost.ToString("#,##0.##");
-                totalEmptyCost += cost;
+                double fullCost = emptyCost + resourceCost;
+                partInfo.fullCost = fullCost.ToString("#,##0.##");
+                totalFullCost += fullCost;
 
-                PartInfos.Add(partInfo);
+                partInfos.Add(partInfo);
             }
 
-            ResourceInfos = GetResources(parts);
+            resourceInfos = GetResources(parts);
+        }
+
+        internal struct PartStringInfo
+        {
+            internal Part part;
+            internal string nameLabel;
+            internal string stage;
+            internal string fullMass;
+            internal string resourceMass;
+            internal string emptyMass;
+            internal string fullCost;
+            internal string resourceCost;
+            internal string emptyCost;
+        }
+
+        internal struct ResourceInfo
+        {
+            internal double amount;
+            internal double mass;
+            internal double cost;
         }
     }
 }
