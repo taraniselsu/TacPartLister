@@ -59,6 +59,7 @@ namespace Tac
         {
             GUILayout.BeginVertical();
 
+            settings.showDeleteButtons = GUILayout.Toggle(settings.showDeleteButtons, "Show \"Delete\" Buttons");
             settings.showStage = GUILayout.Toggle(settings.showStage, "Show Stage Number");
             settings.showFullMass = GUILayout.Toggle(settings.showFullMass, "Show Full Mass");
             settings.showResourceMass = GUILayout.Toggle(settings.showResourceMass, "Show Resource Mass");
@@ -67,6 +68,8 @@ namespace Tac
             settings.showResourceCost = GUILayout.Toggle(settings.showResourceCost, "Show Resource Cost");
             settings.showEmptyCost = GUILayout.Toggle(settings.showEmptyCost, "Show Empty Cost");
             settings.includePhysicsLessParts = GUILayout.Toggle(settings.includePhysicsLessParts, "Include Physics-less Parts");
+            settings.highlightGridAreas = GUILayout.Toggle(settings.highlightGridAreas, "Highlight Mass & Cost areas");
+            settings.showColoredNumbers = GUILayout.Toggle(settings.showColoredNumbers, "Show Colored Numbers");
 
             GUILayout.EndVertical();
 

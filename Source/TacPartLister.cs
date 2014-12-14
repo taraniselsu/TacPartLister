@@ -63,6 +63,9 @@ namespace Tac
             Load();
 
             button.Visible = true;
+
+            GameEvents.onEditorShipModified.Add(OnEditorShipModified);
+            GameEvents.onLevelWasLoaded.Add(OnLevelWasLoaded);
         }
 
         void Update()
@@ -89,6 +92,9 @@ namespace Tac
             this.Log("OnDestroy");
             Save();
             button.Destroy();
+
+            GameEvents.onEditorShipModified.Remove(OnEditorShipModified);
+            GameEvents.onLevelWasLoaded.Remove(OnLevelWasLoaded);
 
             // Make sure we remove our locks
             if (InputLockManager.GetControlLock(lockName) == desiredLock)
@@ -123,6 +129,19 @@ namespace Tac
         private void OnIconClicked()
         {
             window.ToggleVisible();
+        }
+
+        private void OnEditorShipModified(ShipConstruct shipConstruct)
+        {
+            this.Log("OnEditorShipModified - shipConstruct: " + shipConstruct);
+            window.RefreshPartInfos(shipConstruct.parts);
+            // may be EditorLogic.fetch.ship.parts , not shipConstruct.parts ? I'm not sure. It seems to me that it doesn't matter
+        }
+
+        private void OnLevelWasLoaded(GameScenes gameScene)
+        {
+            this.Log("Game scene loaded: " + gameScene);
+            window.RefreshPartInfos(EditorLogic.fetch.ship.parts);
         }
     }
 }
