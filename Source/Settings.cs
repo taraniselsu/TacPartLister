@@ -41,6 +41,7 @@ namespace Tac
         internal bool showFullCost { get; set; }
         internal bool showResourceCost { get; set; }
         internal bool showEmptyCost { get; set; }
+        internal bool includePhysicsLessParts { get; set; }
 
         internal Settings()
         {
@@ -51,6 +52,7 @@ namespace Tac
             showFullCost = true;
             showResourceCost = true;
             showEmptyCost = true;
+            includePhysicsLessParts = true;
         }
 
         internal void Load(ConfigNode config)
@@ -62,6 +64,7 @@ namespace Tac
             showFullCost = Utilities.GetValue(config, "showFullCost", showFullCost);
             showResourceCost = Utilities.GetValue(config, "showResourceCost", showResourceCost);
             showEmptyCost = Utilities.GetValue(config, "showEmptyCost", showEmptyCost);
+            includePhysicsLessParts = Utilities.GetValue(config, "includePhysicsLessParts", includePhysicsLessParts);
         }
 
         internal void Save(ConfigNode config)
@@ -73,6 +76,7 @@ namespace Tac
             config.AddValue("showFullCost", showFullCost);
             config.AddValue("showResourceCost", showResourceCost);
             config.AddValue("showEmptyCost", showEmptyCost);
+            config.AddValue("includePhysicsLessParts", includePhysicsLessParts);
         }
     }
 }

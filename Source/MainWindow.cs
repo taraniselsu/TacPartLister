@@ -131,7 +131,7 @@ namespace Tac
                 GUILayout.Label("Mass", headerStyle, GUILayout.ExpandWidth(true));
                 foreach (Part part in parts)
                 {
-                    if (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp"))
+                    if (settings.includePhysicsLessParts || (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp")))
                     {
                         var mass = part.mass + part.GetModuleMass(part.mass) + part.GetResourceMass();
                         GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
@@ -165,7 +165,7 @@ namespace Tac
                 GUILayout.Label("Empty Mass", headerStyle, GUILayout.ExpandWidth(true));
                 foreach (Part part in parts)
                 {
-                    if (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp"))
+                    if (settings.includePhysicsLessParts || (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp")))
                     {
                         var mass = part.mass + part.GetModuleMass(part.mass);
                         GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));

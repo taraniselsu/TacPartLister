@@ -66,6 +66,7 @@ namespace Tac
             settings.showFullCost = GUILayout.Toggle(settings.showFullCost, "Show Full Cost");
             settings.showResourceCost = GUILayout.Toggle(settings.showResourceCost, "Show Resource Cost");
             settings.showEmptyCost = GUILayout.Toggle(settings.showEmptyCost, "Show Empty Cost");
+            settings.includePhysicsLessParts = GUILayout.Toggle(settings.includePhysicsLessParts, "Include Physics-less Parts");
 
             GUILayout.EndVertical();
 
