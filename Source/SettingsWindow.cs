@@ -59,7 +59,6 @@ namespace Tac
         {
             GUILayout.BeginVertical();
 
-            settings.showDeleteButtons = GUILayout.Toggle(settings.showDeleteButtons, "Show \"Delete\" Buttons");
             settings.showStage = GUILayout.Toggle(settings.showStage, "Show Stage Number");
             settings.showFullMass = GUILayout.Toggle(settings.showFullMass, "Show Full Mass");
             settings.showResourceMass = GUILayout.Toggle(settings.showResourceMass, "Show Resource Mass");

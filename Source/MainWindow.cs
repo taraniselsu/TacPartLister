@@ -51,7 +51,6 @@ namespace Tac
         private GUIStyle headerStyleTop;
         private GUIStyle headerStyle;
         private GUIStyle buttonStyle;
-        private GUIStyle deleteButtonStyle;
         private GUIStyle toggleButtonStyle;
         private GUIStyle versionStyle;
         private GUIStyle gridAreaStyle;
@@ -90,29 +89,6 @@ namespace Tac
             GUILayout.BeginVertical();
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
             GUILayout.BeginHorizontal();
-
-            if (settings.showDeleteButtons)
-            {
-                GUILayout.BeginVertical();
-                GUILayout.Label("", headerStyleTop);
-                GUILayout.Label("", headerStyle);
-                foreach (PartStringInfo partInfo in partInfos)
-                {
-                    if (partInfo.part != EditorLogic.RootPart)
-                    {
-                        if (GUILayout.Button("X", deleteButtonStyle))
-                        {
-                            EditorLogic.DeletePart(partInfo.part);
-                        }
-                    }
-                    else
-                    {
-                        // The root part of ship cannot be deleted
-                        GUILayout.Label("", deleteButtonStyle);
-                    }
-                }
-                GUILayout.EndVertical();
-            }
 
             GUILayout.BeginVertical();
             GUILayout.Label("", headerStyleTop);
@@ -321,10 +297,6 @@ namespace Tac
                 buttonStyle.normal.textColor = Color.white;
                 buttonStyle.alignment = TextAnchor.MiddleLeft;
                 buttonStyle.padding = new RectOffset(6, 2, 4, 2);
-
-                deleteButtonStyle = new GUIStyle(buttonStyle);
-                deleteButtonStyle.normal.textColor = Color.red;
-                deleteButtonStyle.fontStyle = FontStyle.Bold;
 
                 toggleButtonStyle = new GUIStyle(GUI.skin.button);
                 toggleButtonStyle.wordWrap = false;

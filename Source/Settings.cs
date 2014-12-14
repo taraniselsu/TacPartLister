@@ -43,7 +43,6 @@ namespace Tac
         internal bool showEmptyCost { get; set; }
         internal bool includePhysicsLessParts { get; set; }
         internal bool highlightGridAreas { get; set; }
-        internal bool showDeleteButtons { get; set; }
 
         internal Settings()
         {
@@ -56,7 +55,6 @@ namespace Tac
             showEmptyCost = true;
             includePhysicsLessParts = true;
             highlightGridAreas = true;
-            showDeleteButtons = true;
         }
 
         internal void Load(ConfigNode config)
@@ -70,7 +68,6 @@ namespace Tac
             showEmptyCost = Utilities.GetValue(config, "showEmptyCost", showEmptyCost);
             includePhysicsLessParts = Utilities.GetValue(config, "includePhysicsLessParts", includePhysicsLessParts);
             highlightGridAreas = Utilities.GetValue(config, "highlightGridAreas", highlightGridAreas);
-            showDeleteButtons = Utilities.GetValue(config, "showDeleteButtons", showDeleteButtons);
         }
 
         internal void Save(ConfigNode config)
@@ -84,7 +81,6 @@ namespace Tac
             config.AddValue("showEmptyCost", showEmptyCost);
             config.AddValue("includePhysicsLessParts", includePhysicsLessParts);
             config.AddValue("highlightGridAreas", highlightGridAreas);
-            config.AddValue("showDeleteButtons", showDeleteButtons);
         }
     }
 }
