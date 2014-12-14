@@ -25,6 +25,7 @@
  * is purely coincidental.
  */
 
+using HighlightingSystem;
 using KSP.IO;
 using System;
 using System.Collections.Generic;
@@ -100,8 +101,11 @@ namespace Tac
                 bool selected = GUILayout.Toggle(selectedParts.Contains(part), partName, buttonStyle);
                 if (selected)
                 {
-                    selectedParts.Add(part);
-                    Highlight(part);
+                    if (!selectedParts.Contains(part))
+                    {
+                        selectedParts.Add(part);
+                        Highlight(part);
+                    }
                 }
                 else if (selectedParts.Remove(part))
                 {
@@ -334,11 +338,37 @@ namespace Tac
             part.SetHighlightType(Part.HighlightType.AlwaysOn);
             part.SetHighlightColor(Color.blue);
             part.SetHighlight(true, false);
+
+            try
+            {
+                // 3D edge highlighting
+                Highlighter h = part.FindModelTransform("model").gameObject.AddComponent<Highlighter>();
+                h.SeeThroughOn();
+                h.ConstantOn(Color.blue);
+            }
+            catch (Exception ex)
+            {
+                this.LogWarning("Exception in Highlight: " + ex.Message);
+            }
         }
 
         private void ClearHighlight(Part part)
         {
             part.SetHighlightDefault();
+
+            try
+            {
+                // 3D edge highlighting
+                Highlighter h = part.FindModelTransform("model").gameObject.GetComponent<Highlighter>();
+                if (h != null)
+                {
+                    h.Die();
+                }
+            }
+            catch (Exception ex)
+            {
+                this.LogWarning("Exception in ClearHighlight: " + ex.Message);
+            }
         }
     }
 }
