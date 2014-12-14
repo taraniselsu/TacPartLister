@@ -45,6 +45,8 @@ namespace Tac
         private const string lockName = "TACPL_EditorLock";
         private const ControlTypes desiredLock = ControlTypes.EDITOR_SOFT_LOCK | ControlTypes.EDITOR_UI | ControlTypes.EDITOR_LAUNCH;
 
+        private bool cachedIncludePhysicsLessParts = false;
+
         void Awake()
         {
             this.Log("Awake");
@@ -84,6 +86,12 @@ namespace Tac
                 {
                     InputLockManager.RemoveControlLock(lockName);
                 }
+            }
+
+            if (cachedIncludePhysicsLessParts != settings.includePhysicsLessParts)
+            {
+                window.RefreshPartInfos(EditorLogic.fetch.ship.parts);
+                cachedIncludePhysicsLessParts = settings.includePhysicsLessParts;
             }
         }
 
