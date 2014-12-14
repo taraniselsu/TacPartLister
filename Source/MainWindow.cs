@@ -101,12 +101,11 @@ namespace Tac
                 if (selected)
                 {
                     selectedParts.Add(part);
-                    part.SetHighlightColor(Color.blue);
-                    part.SetHighlight(true);
+                    Highlight(part);
                 }
                 else if (selectedParts.Remove(part))
                 {
-                    part.SetHighlightDefault();
+                    ClearHighlight(part);
                 }
             }
             GUILayout.EndVertical();
@@ -130,7 +129,7 @@ namespace Tac
                 {
                     if (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp"))
                     {
-                        var mass = part.mass + part.GetResourceMass();
+                        var mass = part.mass + part.GetModuleMass(part.mass) + part.GetResourceMass();
                         GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
                         totalFullMass += mass;
                     }
@@ -164,7 +163,7 @@ namespace Tac
                 {
                     if (part.PhysicsSignificance != 1 && part.name != "strutConnector" && part.name != "fuelLine" && !part.Modules.Contains("LaunchClamp"))
                     {
-                        var mass = part.mass;
+                        var mass = part.mass + part.GetModuleMass(part.mass);
                         GUILayout.Label(mass.ToString("#,##0.###"), labelStyle2, GUILayout.ExpandWidth(true));
                         totalEmptyMass += mass;
                     }
@@ -184,7 +183,7 @@ namespace Tac
                 foreach (Part part in parts)
                 {
                     double missingResourcesCost = part.Resources.list.Sum(r => (r.maxAmount - r.amount) * r.info.unitCost);
-                    double partCost = part.partInfo.cost + part.GetModuleCosts() - missingResourcesCost;
+                    double partCost = part.partInfo.cost + part.GetModuleCosts(part.partInfo.cost) - missingResourcesCost;
                     GUILayout.Label(partCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
                     totalFullCost += partCost;
                 }
@@ -211,7 +210,7 @@ namespace Tac
                 foreach (Part part in parts)
                 {
                     double maxResourceCost = part.Resources.list.Sum(r => r.maxAmount * r.info.unitCost);
-                    double emptyPartCost = part.partInfo.cost + part.GetModuleCosts() - maxResourceCost;
+                    double emptyPartCost = part.partInfo.cost + part.GetModuleCosts(part.partInfo.cost) - maxResourceCost;
                     GUILayout.Label(emptyPartCost.ToString("#,##0.##"), labelStyle2, GUILayout.ExpandWidth(true));
                     totalEmptyCost += emptyPartCost;
                 }
@@ -328,6 +327,18 @@ namespace Tac
             }
 
             return resourceInfos;
+        }
+
+        private void Highlight(Part part)
+        {
+            part.SetHighlightType(Part.HighlightType.AlwaysOn);
+            part.SetHighlightColor(Color.blue);
+            part.SetHighlight(true, false);
+        }
+
+        private void ClearHighlight(Part part)
+        {
+            part.SetHighlightDefault();
         }
     }
 }
