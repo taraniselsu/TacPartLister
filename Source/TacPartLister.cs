@@ -67,6 +67,7 @@ namespace Tac
             button.Visible = true;
 
             GameEvents.onEditorShipModified.Add(OnEditorShipModified);
+            GameEvents.onEditorRestart.Add(OnEditorRestart);
             GameEvents.onLevelWasLoaded.Add(OnLevelWasLoaded);
         }
 
@@ -102,6 +103,7 @@ namespace Tac
             button.Destroy();
 
             GameEvents.onEditorShipModified.Remove(OnEditorShipModified);
+            GameEvents.onEditorRestart.Remove(OnEditorRestart);
             GameEvents.onLevelWasLoaded.Remove(OnLevelWasLoaded);
 
             // Make sure we remove our locks
@@ -137,19 +139,38 @@ namespace Tac
         private void OnIconClicked()
         {
             window.ToggleVisible();
+            if (window.IsVisible())
+            {
+                this.Log("Window was made visible");
+                window.RefreshPartInfos(EditorLogic.fetch.ship.parts);
+            }
         }
 
         private void OnEditorShipModified(ShipConstruct shipConstruct)
         {
-            this.Log("OnEditorShipModified - shipConstruct: " + shipConstruct);
-            window.RefreshPartInfos(shipConstruct.parts);
-            // may be EditorLogic.fetch.ship.parts , not shipConstruct.parts ? I'm not sure. It seems to me that it doesn't matter
+            if (window.IsVisible())
+            {
+                this.Log("OnEditorShipModified - shipConstruct: " + shipConstruct);
+                window.RefreshPartInfos(shipConstruct.parts);
+            }
+        }
+
+        private void OnEditorRestart()
+        {
+            if (window.IsVisible())
+            {
+                this.Log("OnEditorRestart");
+                window.RefreshPartInfos(EditorLogic.fetch.ship.parts);
+            }
         }
 
         private void OnLevelWasLoaded(GameScenes gameScene)
         {
-            this.Log("Game scene loaded: " + gameScene);
-            window.RefreshPartInfos(EditorLogic.fetch.ship.parts);
+            if (window.IsVisible())
+            {
+                this.Log("Game scene loaded: " + gameScene);
+                window.RefreshPartInfos(EditorLogic.fetch.ship.parts);
+            }
         }
     }
 }
