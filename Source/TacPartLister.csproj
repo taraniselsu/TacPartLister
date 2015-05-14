@@ -83,7 +83,7 @@
   <PropertyGroup>
     <AssemblyMajorVersion>1</AssemblyMajorVersion>
     <AssemblyMinorVersion>4</AssemblyMinorVersion>
-    <AssemblyBuildNumber>0</AssemblyBuildNumber>
+    <AssemblyBuildNumber>1</AssemblyBuildNumber>
     <AssemblyFileMajorVersion>$(AssemblyMajorVersion)</AssemblyFileMajorVersion>
     <AssemblyFileMinorVersion>$(AssemblyMinorVersion)</AssemblyFileMinorVersion>
     <AssemblyFileBuildNumber>$(AssemblyBuildNumber)</AssemblyFileBuildNumber>
@@ -96,7 +96,7 @@
     </DownloadUrl>
     <KspVersionMajor>1</KspVersionMajor>
     <KspVersionMinor>0</KspVersionMinor>
-    <KspVersionPatch>0</KspVersionPatch>
+    <KspVersionPatch>2</KspVersionPatch>
   </PropertyGroup>
   <Target Name="BeforeBuild">
     <CallTarget Targets="GitInfo" />
